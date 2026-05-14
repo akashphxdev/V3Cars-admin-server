@@ -1,0 +1,2387 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbl360viewlog {
+  logId            Int       @id @default(autoincrement())
+  modelId          Int?
+  imageId          String?   @db.VarChar(500)
+  status           Int?      @db.TinyInt
+  addedBy          Int?
+  addedDateTime    DateTime? @db.DateTime(0)
+  approvedBy       Int?
+  approvedDateTime DateTime? @db.DateTime(0)
+  viewType         Int?      @db.TinyInt
+
+  @@index([modelId], map: "modelId")
+}
+
+model tblaboutus {
+  id                  Int     @id
+  aboutTitle          String  @db.VarChar(200)
+  aboutTitleColorCode String  @db.VarChar(10)
+  backgroungdImage    String? @db.Text
+  image               String  @db.VarChar(555)
+  imageAltText        String? @db.VarChar(200)
+  description         String  @db.Text
+}
+
+model tbladditionalchargecategories {
+  categoryId     Int     @id @default(autoincrement())
+  categoryName   String? @db.VarChar(255)
+  categoryStatus Int?    @default(1) @db.TinyInt
+}
+
+model tbladlayer1 {
+  layer1Id        Int     @id @default(autoincrement())
+  layer1Name      String? @db.VarChar(100)
+  layerSizeOption String? @db.VarChar(200)
+}
+
+model tbladlayer2 {
+  layer2Id   Int     @id @default(autoincrement()) @db.SmallInt
+  layer2Name String? @db.VarChar(100)
+  layer1Id   Int?    @db.SmallInt
+
+  @@index([layer1Id], map: "layer1Id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_activated_columns {
+  adminId  Int
+  colName  String? @db.VarChar(25)
+  pageName String? @db.VarChar(100)
+
+  @@index([adminId], map: "adminId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_brands {
+  adminId Int @db.UnsignedInt
+  brandId Int
+
+  @@index([adminId], map: "adminId")
+  @@index([brandId], map: "brandId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_cities {
+  adminId Int?
+  cityId  Int?
+
+  @@index([adminId], map: "aminId")
+  @@index([cityId], map: "cityId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_modelbodytype {
+  adminId         Int?
+  modelBodyTypeId Int?
+
+  @@index([adminId], map: "adminId")
+  @@index([modelBodyTypeId], map: "modelBodyTypeId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_models {
+  adminId Int?
+  modelId Int?
+
+  @@index([adminId], map: "adminId")
+  @@index([modelId], map: "modelId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladmin_modeltype {
+  adminId     Int?
+  modelTypeId Int?
+
+  @@index([adminId], map: "adminId")
+  @@index([modelTypeId], map: "modelTypeId")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbladminmenus {
+  menuName String? @db.VarChar(250)
+  adminId  Int?    @db.TinyInt
+  menuId   Int?
+
+  @@index([adminId], map: "adminId")
+  @@ignore
+}
+
+model tbladmins {
+  adminId             Int       @id @default(autoincrement()) @db.UnsignedInt
+  adminUserName       String    @db.VarChar(255)
+  adminPassword       String    @db.VarChar(255)
+  adminName           String    @db.VarChar(255)
+  adminEmailId        String    @db.VarChar(255)
+  accessBrands        String?   @db.VarChar(50)
+  accessStartDate     DateTime? @db.Date
+  accessEndDate       DateTime? @db.Date
+  addedDateTime       DateTime? @db.DateTime(0)
+  status              String    @db.VarChar(255)
+  otp                 String?   @db.VarChar(100)
+  otpGenerateDateTime DateTime? @db.DateTime(0)
+  adminType           Int       @default(0)
+  lastLoginDateTime   DateTime? @db.DateTime(0)
+  lastLoginIPAddress  String?   @db.VarChar(100)
+  maxRows             Int       @default(10) @db.UnsignedTinyInt
+  addedBy             Int?
+  adminSubType        Int?      @db.TinyInt
+  isLock              Int?      @default(0) @db.TinyInt
+
+  @@index([status], map: "status")
+}
+
+model tbladmins_columns {
+  adminColumnId Int     @id @default(autoincrement())
+  adminId       Int?
+  colNames      String? @db.VarChar(500)
+  tableName     String? @db.VarChar(255)
+
+  @@index([adminId], map: "adminId")
+  @@index([tableName], map: "tableName")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbladsizes {
+  adSizeId         Int     @id @default(autoincrement())
+  device           Int?    @db.TinyInt
+  adSize           String? @db.VarChar(45)
+  previewImagePath String? @db.VarChar(100)
+  status           Int?    @default(1) @db.TinyInt
+  isSidebar        Int?    @db.TinyInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbladvertisments {
+  advertisementId   Int       @id @default(autoincrement())
+  advertisementName String?   @db.VarChar(100)
+  advertisementSize Int?      @db.TinyInt
+  imageName         String?   @db.VarChar(100)
+  imageAltText      String?   @db.VarChar(255)
+  redirectUrl       String?   @db.VarChar(1000)
+  status            Int?      @db.TinyInt
+  pixelHead         String?   @db.Text
+  pixelBody         String?   @db.Text
+  pageId            Int?
+  addedBy           Int?
+  addedDateTime     DateTime? @db.DateTime(0)
+  lastUpdatedOn     DateTime? @db.DateTime(0)
+  lastUpdatedBy     Int?
+  layer1Id          Int?      @db.SmallInt
+  layer2Id          Int?      @db.SmallInt
+  brandId           Int?
+  modelId           String?   @db.VarChar(500)
+
+  @@index([addedDateTime], map: "addedDateTime")
+  @@index([advertisementSize], map: "advertisementSize")
+  @@index([pageId], map: "pageId")
+  @@index([status], map: "status")
+}
+
+model tbladvsearchsitemap {
+  id      Int     @id @default(autoincrement())
+  pageUrl String? @db.VarChar(1000)
+}
+
+model tbladvsearchsitemap_del {
+  id      Int     @id @default(autoincrement())
+  pageUrl String? @db.VarChar(1000)
+
+  @@index([pageUrl(length: 100)], map: "pageURL")
+}
+
+model tblauthor {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(120)
+  url_slug      String?  @db.VarChar(150)
+  imageUrl      String   @db.VarChar(555)
+  authorBio     String   @db.Text
+  facebookURL   String?  @db.VarChar(355)
+  twitterURL    String?  @db.VarChar(355)
+  instaURL      String?  @db.VarChar(355)
+  linkedInURL   String?  @db.VarChar(355)
+  addedDateTime DateTime @db.DateTime(0)
+  status        Int?     @default(1) @db.TinyInt
+  imageAltText  String?  @db.VarChar(255)
+
+  @@index([url_slug], map: "idx_tblauthor_url_slug")
+  @@index([status], map: "status")
+}
+
+model tblauto_expo_links {
+  linkId        Int       @id @default(autoincrement())
+  linkText      String?   @db.VarChar(255)
+  linkUrl       String?   @db.VarChar(255)
+  status        Int?      @default(1) @db.TinyInt
+  addedBy       Int?      @default(0)
+  addedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblbestvariants {
+  id      Int     @id @default(autoincrement())
+  orderId Int?
+  pageUrl String? @db.VarChar(255)
+  imgUrl  String? @db.VarChar(255)
+  title   String? @db.VarChar(255)
+}
+
+model tblblacklisted_ip {
+  id           Int       @id @default(autoincrement())
+  ipAddress    String?   @db.VarChar(45)
+  mobileNumber String?   @db.VarChar(45)
+  dateTime     DateTime? @db.DateTime(0)
+}
+
+model tblbrandpricechange {
+  id                  Int       @id @default(autoincrement())
+  brandId             Int?
+  brandWebsiteModelId String?   @db.VarChar(100)
+  variant             String?   @db.VarChar(255)
+  engine              String?   @db.VarChar(255)
+  fullDescription     String?   @db.VarChar(255)
+  price               String?   @db.VarChar(45)
+  addedDateTime       DateTime? @db.DateTime(0)
+  modelId             Int?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblbrands {
+  brandId               Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  brandName             String?  @db.VarChar(100)
+  logoPath              String?  @db.VarChar(500)
+  unquieViews           String?  @db.VarChar(100)
+  popularity            String?  @db.VarChar(3)
+  brandSlug             String?  @db.VarChar(45)
+  brandDescription      String?  @db.Text
+  bannerImage           String?  @db.VarChar(255)
+  bannerImageAltTag     String?  @db.VarChar(255)
+  isFasttag             Int      @default(0) @db.TinyInt
+  brandType             Int      @default(0) @db.TinyInt
+  displayName           String?  @db.VarChar(100)
+  roadsideAssistance    Int?
+  emailAddress          String?  @db.VarChar(100)
+  stateId               Int?
+  cityId                Int?
+  parentOrganization    String?  @db.VarChar(255)
+  products              String?  @db.VarChar(255)
+  founderName           String?  @db.VarChar(255)
+  customerService       String?  @db.VarChar(255)
+  serviceNetwork        Boolean? @default(false)
+  websiteUrl            String?  @db.VarChar(255)
+  brandKeyPeople        String?  @db.Text
+  introContent          String?  @db.Text
+  brandOrganizationName String?  @db.VarChar(255)
+  websiteName           String?  @db.VarChar(255)
+  brandTitle            String?  @db.VarChar(25)
+  iconPath              String?  @db.VarChar(100)
+  brandStatus           Int?     @default(0) @db.TinyInt
+  similarBrand          String?  @db.VarChar(300)
+
+  @@index([brandName(length: 10)], map: "brandName")
+  @@index([brandSlug(length: 15)], map: "brandSlug")
+}
+
+model tblbrandseo {
+  seoId           Int     @id @default(autoincrement())
+  brandId         Int?
+  metaTitle       String? @db.VarChar(255)
+  metaDescription String? @db.VarChar(1000)
+  metakeyword     String? @db.VarChar(1000)
+  canonicalUrl    String? @db.VarChar(255)
+  schemaTags      String? @db.Text
+
+  @@index([brandId], map: "brandId")
+}
+
+model tblbrandstaticcontent {
+  contentId          Int     @id @default(autoincrement())
+  brandId            Int?
+  budgetTypeContent  String? @db.Text
+  fuelTypeContent    String? @db.Text
+  modelTypeContent   String? @db.Text
+  upcomingCarContent String? @db.Text
+
+  @@index([brandId], map: "brandId")
+}
+
+model tblbrochurehistory {
+  id            Int       @id @default(autoincrement())
+  modelId       Int?
+  month         Int?      @db.TinyInt
+  year          Int?      @db.Year
+  fileName      String?   @db.VarChar(500)
+  addedBy       Int?
+  addedDateTime DateTime? @db.DateTime(0)
+
+  @@index([modelId], map: "modelID")
+  @@index([month], map: "month")
+  @@index([year], map: "year")
+}
+
+model tblcareerjobs {
+  jobId          Int       @id @default(autoincrement())
+  title          String    @db.VarChar(50)
+  jobType        String    @db.VarChar(15)
+  qualification  String    @db.VarChar(150)
+  experience     String    @db.VarChar(30)
+  location       String    @db.VarChar(20)
+  applystartDate DateTime  @default(now()) @db.DateTime(0)
+  applylastDate  DateTime? @db.DateTime(0)
+  jobDescription String?   @db.Text
+  ourOfferings   String?   @db.Text
+  hrEmailAddress String    @db.VarChar(50)
+  status         Int       @default(0) @db.TinyInt
+  addeddateTime  DateTime  @default(now()) @db.DateTime(0)
+  addedBy        Int       @db.SmallInt
+
+  @@index([status], map: "status")
+}
+
+model tblcarinsurancecontent {
+  uId                 Int     @id @default(autoincrement())
+  carInsuranceHeading String? @db.VarChar(100)
+  carInsuranceContent String? @db.LongText
+  section1Heading     String? @db.VarChar(100)
+  section1Desc        String? @db.LongText
+  section2Heading     String? @db.VarChar(100)
+  section2Desc        String? @db.LongText
+  section3Heading     String? @db.VarChar(100)
+  section3Desc        String? @db.LongText
+  section4Heading     String? @db.VarChar(100)
+  section4Desc        String? @db.LongText
+  section5Heading     String? @db.VarChar(100)
+  section5Desc        String? @db.LongText
+  section6Heading     String? @db.VarChar(100)
+  section6SubDesc3    String? @db.LongText
+  section7Heading     String? @db.VarChar(100)
+  section7Desc        String? @db.LongText
+  section8Heading     String? @db.VarChar(100)
+  section8Desc        String? @db.LongText
+  section9Heading     String? @db.VarChar(100)
+  section9Desc        String? @db.LongText
+  section10heading    String? @db.VarChar(100)
+  section10Desc       String? @db.LongText
+  section6SubDesc1    String? @db.LongText
+  section6SubDesc2    String? @db.LongText
+}
+
+model tblcarloanemifaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+  updatedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblcarloanpartner {
+  pID         Int     @id @default(autoincrement())
+  partnerName String? @db.VarChar(100)
+  partnerLogo String? @db.VarChar(300)
+  intrestRate Float?  @db.Float
+  lenderURL   String? @db.VarChar(255)
+}
+
+model tblcarreviews {
+  reviewId                 Int       @id @default(autoincrement())
+  userId                   Int?
+  variantId                Int?
+  reviewTitle              String?   @db.VarChar(100)
+  reviewDescription        String?   @db.Text
+  cityMileage              Float?    @db.Float
+  highwayMileage           Float?    @db.Float
+  monthlyMaintainanceCost  Int?
+  ageOfCar                 String?   @db.VarChar(255)
+  dateAndTime              DateTime? @db.DateTime(0)
+  reviewIp                 String?   @db.VarChar(20)
+  isApprovedRejected       Int?      @default(0) @db.TinyInt
+  rejectedReason           String?   @db.VarChar(255)
+  approvedRejectedBy       Int?      @db.TinyInt
+  approvedRejectedDateTime DateTime? @db.DateTime(0)
+  isChanged                Int?      @default(0) @db.TinyInt
+  isUserApproveReject      Int?      @db.TinyInt
+  userRejectedReason       String?   @db.VarChar(255)
+  fuelType                 Int?      @db.TinyInt
+  variantType              String?   @db.VarChar(50)
+}
+
+model tblcarreviewsversions {
+  id                      Int       @id @default(autoincrement())
+  reviewId                Int?
+  reviewTitle             String?   @db.VarChar(255)
+  reviewDescription       String?   @db.Text
+  cityMileage             Float?    @db.Float
+  highwayMileage          Float?    @db.Float
+  monthlyMaintainanceCost Int?
+  ageOfCar                String?   @db.VarChar(50)
+  addedBy                 Int?
+  addedDateTime           DateTime? @db.DateTime(0)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblcarsdetails {
+  MAKE_ID      Int
+  MAKE_NAME    String @db.VarChar(100)
+  MODEL_ID     Int
+  MODEL_NAME   String @db.VarChar(100)
+  VARIANT_ID   Int
+  VARIANT_NAME String @db.VarChar(100)
+  YEAR_ID      Int
+  YEAR         Int?
+
+  @@ignore
+}
+
+model tblcities {
+  cityId            Int     @id @default(autoincrement()) @db.SmallInt
+  cityName          String? @db.VarChar(100)
+  stateId           Int?    @db.UnsignedTinyInt
+  countryId         Int     @default(0) @db.UnsignedTinyInt
+  status            Int     @default(0) @db.TinyInt
+  isDefault         Int?    @default(0) @db.TinyInt
+  isPopularCity     Int?    @default(0) @db.TinyInt
+  isTopCity         Int?    @default(0) @db.TinyInt
+  ismajorCityPetrol Int     @default(0) @db.TinyInt
+  ismajorCityDiesel Int     @default(0) @db.TinyInt
+  ismajorCityCNG    Int     @default(0) @db.TinyInt
+  isCurrentCity     Int?    @default(0) @db.TinyInt
+  isImage           String? @db.VarChar(255)
+
+  @@index([cityName(length: 10)], map: "cityName")
+  @@index([stateId], map: "stateId")
+}
+
+model tblclientapi {
+  apiId           Int       @id @default(autoincrement())
+  apiName         String?   @db.VarChar(55)
+  apiDesc         String?   @db.VarChar(1000)
+  apiStatus       Int       @default(0)
+  createdBy       String?   @db.VarChar(100)
+  createdDateTime DateTime? @db.DateTime(0)
+  modelId         Int?
+  lmsApiUrl       String?   @db.VarChar(255)
+  modelIds        String?   @db.VarChar(1000)
+  brandId         Int?
+}
+
+model tblcolors {
+  colorId       Int     @id @default(autoincrement())
+  colorName     String? @db.VarChar(255)
+  imageFileName String? @db.VarChar(100)
+  colorCode     String? @db.VarChar(45)
+}
+
+model tblcommentreply {
+  id        Int      @id @default(autoincrement())
+  commentId Int
+  reply     String   @db.Text
+  dateTime  DateTime @default(now()) @db.DateTime(0)
+  replyBy   Int
+}
+
+model tblcomments {
+  id            Int      @id @default(autoincrement())
+  contentId     Int      @db.SmallInt
+  name          String   @db.VarChar(100)
+  email         String   @db.VarChar(100)
+  contactNumber String?  @db.VarChar(20)
+  comment       String   @db.Text
+  like          Int      @default(0) @db.TinyInt
+  dislike       Int      @default(0) @db.TinyInt
+  heart         Int      @default(0) @db.TinyInt
+  pin           Int      @default(0) @db.TinyInt
+  status        Int      @default(1) @db.TinyInt
+  report        Int      @default(0) @db.TinyInt
+  dateTime      DateTime @default(now()) @db.DateTime(0)
+  ipAddress     String   @db.VarChar(100)
+  isVisible     Int      @default(1) @db.TinyInt
+  currentUrl    String?  @db.VarChar(300)
+
+  @@index([contentId], map: "idx_tblcomments_contentId")
+  @@index([isVisible], map: "idx_tblcomments_isVisible")
+}
+
+model tblcomparecarsurls {
+  urlId      Int     @id @default(autoincrement())
+  cmpUrl     String  @db.VarChar(250)
+  modelIds   String? @db.VarChar(20)
+  totalViews Int     @default(0)
+
+  @@index([cmpUrl(length: 50)], map: "cmpurl")
+  @@index([totalViews], map: "totalViews")
+}
+
+model tblconfig {
+  id                  Int  @id @default(autoincrement())
+  isWhatsaappAllow    Int? @default(1) @db.TinyInt
+  isEmailAllow        Int? @default(1) @db.TinyInt
+  isSMSAllow          Int? @default(1) @db.TinyInt
+  minOtpAllowToNumber Int?
+  minHoursBlocked     Int? @db.TinyInt
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblcontent_views {
+  visitor_ip String   @db.VarChar(50)
+  page_id    Int
+  dateTime   DateTime @default(now()) @db.DateTime(0)
+
+  @@index([dateTime], map: "idx_tblcontent_views_dateTime")
+  @@index([page_id], map: "idx_tblcontent_views_page_id")
+  @@index([visitor_ip(length: 15)], map: "idx_tblcontent_views_visitor_ip")
+  @@ignore
+}
+
+model tblcontentdraft {
+  draftId               Int       @id @default(autoincrement())
+  templateId            Int?
+  brandId               Int?
+  modelId               Int?
+  powertrainId          Int?
+  variantId             Int?
+  authorId              Int?
+  bodyContent           String?   @db.LongText
+  createdBy             Int?
+  createdDateTime       DateTime? @db.DateTime(0)
+  lastUpdateBy          Int?
+  lastUpdatedTime       DateTime? @db.DateTime(0)
+  titleContent          String?   @db.VarChar(500)
+  urlContent            String?   @db.VarChar(500)
+  metaTitle             String?   @db.VarChar(500)
+  metaDesc              String?   @db.Text
+  metaKeywords          String?   @db.VarChar(1000)
+  socialText            String?   @db.VarChar(500)
+  introContent          String?   @db.Text
+  descContent           String?   @db.Text
+  priceContent          String?   @db.Text
+  engineSpecContent     String?   @db.Text
+  featuresContent       String?   @db.LongText
+  pMaintCostContent     String?   @db.LongText
+  runCostContent        String?   @db.LongText
+  dimensionContent      String?   @db.Text
+  variantExplainContent String?   @db.Text
+  verdictContent        String?   @db.Text
+  colorContent          String?   @db.Text
+  endContent            String?   @db.Text
+  cityId                Int?
+  fuelType              String?   @db.VarChar(45)
+  cmpbrandId            Int?
+  cmpModelId            Int?
+  cmppowertrainId       Int?
+  cmpvariantId          Int?
+  fuelPrice             Decimal?  @db.Decimal(10, 2)
+  periodicYear          Int?
+  kmDriven              Int?
+  displayFeaturePrice   Int?
+
+  @@index([brandId], map: "brandId")
+  @@index([cmppowertrainId], map: "cmppowertrainId")
+  @@index([cmpvariantId], map: "cmpvariantId")
+  @@index([modelId], map: "modelId")
+  @@index([powertrainId], map: "powertrainId")
+  @@index([templateId], map: "templateId")
+  @@index([variantId], map: "variantId")
+}
+
+model tblcontents {
+  id                   Int      @id @default(autoincrement())
+  title                String   @db.VarChar(1000)
+  pageUrl              String   @db.VarChar(1024)
+  thumbnailUrl         String   @db.VarChar(1000)
+  thumbnailAltText     String?  @db.VarChar(225)
+  metaTitle            String?  @db.VarChar(1000)
+  metaDescription      String?  @db.Text
+  metaKeywords         String?  @db.Text
+  tags                 String?  @db.VarChar(5000)
+  contentType          Int      @db.MediumInt
+  shortDescription     String   @db.Text
+  fullContent          String   @db.LongText
+  authorId             Int
+  brandTagging         String?  @db.Text
+  modelTagging         String?  @db.Text
+  contentPublishType   Int      @db.SmallInt
+  publishDateandTime   DateTime @default(now()) @db.DateTime(0)
+  contentPublishStatus Int      @db.SmallInt
+  uniqueUsers          String?  @default("0") @db.VarChar(20)
+  last_15days_view     Int      @default(0)
+  last_30days_view     Int      @default(0)
+  addedDateTime        DateTime @default(now()) @db.DateTime(0)
+  addedBy              Int
+  updateStatus         Int      @default(0) @db.TinyInt
+  faq                  String?  @db.LongText
+  schemaBodyContent    String?  @db.LongText
+  updatedDatetime      DateTime @default(now()) @db.DateTime(0)
+  videoId              Int?
+  ogImageUrl           String?  @db.VarChar(1000)
+
+  @@index([addedBy], map: "idx_tblcontents_addedBy")
+  @@index([addedDateTime], map: "idx_tblcontents_addedDateTime")
+  @@index([authorId], map: "idx_tblcontents_authorId")
+  @@index([brandTagging(length: 10)], map: "idx_tblcontents_brandTagging")
+  @@index([contentPublishStatus], map: "idx_tblcontents_contentPublishStatus")
+  @@index([contentPublishType], map: "idx_tblcontents_contentPublishType")
+  @@index([contentType], map: "idx_tblcontents_contentType")
+  @@index([last_15days_view], map: "idx_tblcontents_last_15days_view")
+  @@index([last_30days_view], map: "idx_tblcontents_last_30days_view")
+  @@index([modelTagging(length: 10)], map: "idx_tblcontents_modelTagging")
+  @@index([pageUrl(length: 100)], map: "idx_tblcontents_pageUrl")
+  @@index([publishDateandTime], map: "idx_tblcontents_publishDateandTime")
+  @@index([title(length: 20)], map: "idx_tblcontents_title")
+  @@index([uniqueUsers], map: "idx_tblcontents_uniqueUsers")
+  @@index([updateStatus], map: "idx_tblcontents_updateStatus")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblcountries {
+  countryId            Int     @id @default(autoincrement())
+  countryName          String? @db.VarChar(100)
+  pincodeLength        Int?
+  countryCurrency      String? @db.VarChar(45)
+  currencySymbol       String? @db.VarChar(45)
+  distanceCalcOption   Int?    @default(0) @db.TinyInt
+  currencyRate         Float?  @db.Float
+  fuelUnitOption       Int?    @db.TinyInt
+  isActive             Int?    @default(1) @db.TinyInt
+  exchangeCurrencyRate Float?  @db.Float
+  countryCode          String? @db.VarChar(255)
+}
+
+model tblcountriesold {
+  countryId            Int     @id @default(autoincrement())
+  countryName          String? @db.VarChar(100)
+  pincodeLength        Int?
+  countryCurrency      String? @db.VarChar(45)
+  currencySymbol       String? @db.VarChar(45)
+  distanceCalcOption   Int?    @default(0) @db.TinyInt
+  currencyRate         Float?  @db.Float
+  fuelUnitOption       Int?    @db.TinyInt
+  isActive             Int?    @default(1) @db.TinyInt
+  exchangeCurrencyRate String? @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbldistricts {
+  id                Int     @id @default(autoincrement())
+  stateId           Int?
+  districtName      String? @db.VarChar(255)
+  status            Int?    @default(1) @db.TinyInt
+  isPopularCity     Int?    @default(0) @db.TinyInt
+  ismajorCityPetrol Int?    @default(0) @db.TinyInt
+  ismajorCityDiesel Int?    @default(0) @db.TinyInt
+  ismajorCityCNG    Int?    @default(0) @db.TinyInt
+}
+
+model tbldistrictsold {
+  id            Int     @id @default(autoincrement())
+  stateId       Int?
+  districtName  String? @db.VarChar(100)
+  isPopularCity Int?    @db.TinyInt
+
+  @@index([districtName], map: "districtName")
+  @@index([stateId], map: "stateId")
+}
+
+model tblevents {
+  eventId          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  eventType        Int       @default(0) @db.TinyInt
+  eventDescription String?   @db.Text
+  ipAddress        String?   @db.VarChar(30)
+  eventTime        DateTime? @db.DateTime(0)
+  adminId          Int       @default(0)
+
+  @@index([adminId], map: "adminId")
+}
+
+model tblexpireurlchangelog {
+  logId         Int       @id @default(autoincrement())
+  expiredUrl    String?   @db.VarChar(255)
+  activeUrl     String?   @db.VarChar(255)
+  addedBy       Int?
+  addedDateTime DateTime? @db.DateTime(0)
+  contentIds    String?   @db.Text
+}
+
+model tblfaqcategories {
+  categoryId   Int     @id @default(autoincrement())
+  categoryName String? @db.VarChar(100)
+  sequenceNo   Int?    @db.TinyInt
+}
+
+model tblfaqquesans {
+  id              Int       @id @default(autoincrement())
+  modelFaqId      Int?
+  quesText        String?   @db.VarChar(1000)
+  ansText         String?   @db.VarChar(1000)
+  addedBy         Int?
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblfeatureoptions {
+  optionId        Int      @id @default(autoincrement())
+  featureId       Int
+  optionName      String   @db.VarChar(255)
+  optionPrice     Int
+  importanceId    Int?
+  featurePriority Int?
+  createdAt       DateTime @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([featureId], map: "featureId")
+}
+
+model tblfeaturerules {
+  ruleId    Int      @id @default(autoincrement())
+  featureId Int
+  rminValue Decimal  @db.Decimal(10, 2)
+  rmaxValue Decimal  @db.Decimal(10, 2)
+  rate      Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([featureId], map: "featureId")
+}
+
+model tblfeatures {
+  featureId       Int     @id @default(autoincrement())
+  featureName     String? @db.VarChar(555)
+  categoryId      Int?
+  featurePrice    Int?
+  importanceId    Int?
+  featurePriority Int
+  displayName     String? @db.VarChar(255)
+  subCategoryId   Int?
+  Popularity      String? @db.VarChar(3)
+
+  @@index([categoryId], map: "categoryID")
+  @@index([subCategoryId], map: "subcategoryId")
+}
+
+model tblfeaturescategories {
+  categoryId       Int     @id @default(autoincrement()) @db.TinyInt
+  categoryName     String? @db.VarChar(100)
+  categoryPriority Int?    @db.TinyInt
+}
+
+model tblfeaturesimportance {
+  importanceId   Int     @id @default(autoincrement()) @db.TinyInt
+  importanceName String? @db.VarChar(100)
+}
+
+model tblfeaturesnew {
+  featureId       Int                           @id @default(autoincrement())
+  featureName     String                        @db.VarChar(255)
+  alsoKnownAs     String?                       @db.Text
+  categoryId      Int
+  subCategoryId   Int
+  selectionType   tblfeaturesnew_selectionType
+  pricing         tblfeaturesnew_pricing
+  featurePrice    Decimal?                      @db.Decimal(10, 2)
+  displayOption   tblfeaturesnew_displayOption?
+  displayCount    tblfeaturesnew_displayCount?
+  importanceId    Int
+  featurePriority Int
+  displayName     String                        @db.VarChar(255)
+  popularity      Int?
+  status          Int
+  createdAt       DateTime                      @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime                      @default(now()) @db.Timestamp(0)
+
+  @@index([categoryId], map: "categoryId")
+  @@index([importanceId], map: "importanceId")
+  @@index([subCategoryId], map: "subCategoryId")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblfooter {
+  id             Int
+  logo           String  @db.VarChar(500)
+  aboutText      String  @db.VarChar(1000)
+  address        String  @db.VarChar(300)
+  email          String  @db.VarChar(50)
+  phone          String  @db.VarChar(20)
+  newsletterText String? @db.VarChar(1000)
+  youtube        String? @db.VarChar(350)
+  facebook       String? @db.VarChar(350)
+  instagram      String? @db.VarChar(350)
+  twitter        String? @db.VarChar(350)
+
+  @@index([id], map: "id")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblftpdomins {
+  id            Int       @db.MediumInt
+  ftpName       String    @db.VarChar(100)
+  ftpHost       String    @db.VarChar(150)
+  ftpUserName   String    @db.VarChar(100)
+  ftpPassword   String    @db.VarChar(250)
+  addedDateTime DateTime? @default(now()) @db.DateTime(0)
+
+  @@ignore
+}
+
+model tblfuelcostcalfaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+  updatedDateTime DateTime? @db.DateTime(0)
+  countryId       Int?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblfuelcostcalint {
+  countryId           Int?
+  content             String? @db.Text
+  metaTitle           String? @db.VarChar(255)
+  metaDescription     String? @db.Text
+  metaKeywords        String? @db.VarChar(255)
+  canonicalURL        String? @db.VarChar(255)
+  schemaa             String? @db.Text
+  schemaTags          String? @db.Text
+  ogTags              String? @db.Text
+  pageTitle           String? @db.VarChar(255)
+  pageOverviewContent String? @db.Text
+  section1Title       String? @db.VarChar(255)
+  section1Desc        String? @db.Text
+  section2Title       String? @db.VarChar(255)
+  section2Desc        String? @db.Text
+
+  @@ignore
+}
+
+model tblfuelprice {
+  id            Int       @id @default(autoincrement())
+  stateId       Int
+  districtId    Int
+  fuelType      Int?      @db.TinyInt
+  fuelPrice     Decimal   @db.Decimal(10, 2)
+  addedDateTime DateTime? @default(now()) @db.DateTime(0)
+  updatedBy     Int?      @default(0) @db.TinyInt
+
+  @@index([addedDateTime], map: "DateTime")
+  @@index([districtId], map: "cityId")
+  @@index([fuelPrice], map: "fuelPrice")
+  @@index([fuelType], map: "fuelType")
+  @@index([stateId], map: "stateId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblfuelprice_old {
+  id            Int      @id @default(autoincrement())
+  stateId       Int?
+  districtId    Int?
+  fuelType      Int?
+  fuelPrice     String?  @db.VarChar(50)
+  addedDateTime DateTime @default(now()) @db.DateTime(0)
+  updatedBy     Int?     @db.TinyInt
+
+  @@index([addedDateTime], map: "addedDateTime")
+  @@index([districtId], map: "districtId")
+  @@index([fuelPrice], map: "fuelPrice")
+  @@index([fuelType], map: "fuelType")
+  @@index([stateId], map: "stateId")
+}
+
+model tblfuelpricefaqs {
+  qId             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(250)
+  ansText         String?   @db.LongText
+  sequence        Int?      @default(0)
+  addedBy         Int?
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+  fadCityId       String?   @db.VarChar(1000)
+  pageType        Int?      @default(0) @db.TinyInt
+  fuelType        Int?      @default(0) @db.TinyInt
+  faqStates       String?   @db.VarChar(500)
+  faqCityState    String?   @db.VarChar(500)
+}
+
+model tblgenfacelifthistory {
+  id            Int       @id @default(autoincrement())
+  modelId       Int?
+  newModelId    Int?
+  dimension     Int?      @default(0) @db.TinyInt
+  powertrain    Int       @default(0) @db.TinyInt
+  variants      Int?      @default(0) @db.TinyInt
+  colors        Int       @default(0)
+  pageContent   Int       @default(0)
+  prosCons      Int       @default(0)
+  rivals        Int       @default(0)
+  viewData      Int       @default(0)
+  faq           Int       @default(0)
+  monthlySales  Int       @default(0)
+  news          Int       @default(0)
+  videos        Int       @default(0)
+  images        Int       @default(0)
+  webStories    Int       @default(0)
+  addedBy       Int?
+  addedDateTime DateTime? @db.DateTime(0)
+
+  @@index([modelId], map: "modelId")
+  @@index([newModelId], map: "newModelId")
+}
+
+model tblgoogleads {
+  adId          Int       @id @default(autoincrement()) @db.MediumInt
+  adsName       String    @db.VarChar(30)
+  adsType       Int       @db.TinyInt
+  unitCode      String    @db.Text
+  status        Int       @default(1) @db.TinyInt
+  addedDateTime DateTime  @default(now()) @db.DateTime(0)
+  addedBy       Int       @db.MediumInt
+  lastUpdatedOn DateTime? @db.DateTime(0)
+  lastUpdatedBy Int?
+
+  @@index([adsType], map: "adsType")
+  @@index([status], map: "status")
+}
+
+model tblhomepage_banner {
+  bannerId          Int     @id @default(autoincrement())
+  bannerImage       String  @db.VarChar(255)
+  overlayImage      String? @db.VarChar(255)
+  bannerStatus      Boolean @default(true)
+  redirectLink      String? @db.VarChar(1000)
+  mobileBannerImage String? @db.VarChar(255)
+  desktopImgAltText String? @db.VarChar(255)
+  mobileImgAltText  String? @db.VarChar(255)
+
+  @@index([bannerStatus], map: "idx_tblhomepage_banner_bannerStatus")
+}
+
+model tblindustries {
+  industryId   Int    @id @default(autoincrement()) @db.SmallInt
+  industryName String @db.VarChar(50)
+  status       Int    @default(1) @db.TinyInt
+}
+
+model tblinsertdata {
+  id     Int @id @default(autoincrement())
+  newsId Int
+  status Int @default(0) @db.TinyInt
+  type   Int @default(1) @db.MediumInt
+}
+
+model tbllandingpages {
+  lpId                       Int       @id @default(autoincrement())
+  modelIds                   String?   @db.Text
+  brandId                    Int?
+  lpName                     String?   @db.VarChar(55)
+  cityIds                    String?   @db.Text
+  haveVariant                Int       @default(0)
+  folderName                 String?   @db.VarChar(55)
+  formHeading                String?   @db.VarChar(555)
+  otpType                    String?   @db.VarChar(30)
+  headConversionPixels       String?   @db.Text
+  bodyConversionPixels       String?   @db.Text
+  headOtpConversionPixels    String?   @db.Text
+  bodyOtpConversionPixels    String?   @db.Text
+  headThanksConversionPixels String?   @db.Text
+  bodyThanksConversionPixels String?   @db.Text
+  backgroundImagePath        String?   @db.VarChar(500)
+  leftLogoPath               String?   @db.VarChar(555)
+  rightLogoPath              String?   @db.VarChar(555)
+  designType                 Int?
+  clientApiId                String?   @db.VarChar(100)
+  createdBy                  Int?
+  createdDateTime            DateTime? @db.DateTime(0)
+  isMultipleBrand            Int       @default(0) @db.TinyInt
+  brandIds                   String?   @db.VarChar(255)
+  leftLogoAltText            String?   @db.VarChar(255)
+  rightLogoAltText           String?   @db.VarChar(255)
+  backgroundImageAltText     String?   @db.VarChar(255)
+  formfields                 String?   @db.VarChar(255)
+  interestedModels           String?   @db.VarChar(255)
+  interestedModelHeading     String?   @db.VarChar(200)
+  sellCarSourceName          String?   @db.VarChar(60)
+  isdraft                    Int?      @default(0) @db.TinyInt
+}
+
+model tbllandingpagesnew {
+  lpId    Int     @id @default(autoincrement())
+  modelId Int
+  utm     String? @db.VarChar(100)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblleads {
+  leadId                    Int       @id @default(autoincrement()) @db.UnsignedInt
+  salutation                String?   @db.VarChar(45)
+  name                      String?   @db.VarChar(100)
+  phoneNumber               String?   @db.VarChar(15)
+  isOTPVerified             Int       @default(0) @db.UnsignedTinyInt
+  emailAddress              String?   @db.VarChar(150)
+  cityName                  String?   @db.VarChar(150)
+  stateId                   Int?      @db.UnsignedTinyInt
+  brandId                   Int?
+  modelId                   Int?      @db.UnsignedInt
+  colorId                   Int?
+  variantId                 Int?      @default(0) @db.UnsignedSmallInt
+  otpValue                  String?   @db.VarChar(10)
+  otpGenerationDateTime     DateTime? @db.DateTime(0)
+  saltValue                 String?   @db.VarChar(10)
+  ipAddress                 String?   @db.VarChar(50)
+  leadCaptureDateTime       DateTime? @db.DateTime(0)
+  leadSource                String?   @db.VarChar(100)
+  leadStatus                Int?      @db.UnsignedTinyInt
+  device                    String?   @db.VarChar(50)
+  browser                   String?   @db.VarChar(50)
+  OS                        String?   @db.VarChar(50)
+  comments                  String?   @db.VarChar(255)
+  isPushedToClientApi       Int       @default(0)
+  lpId                      Int?
+  client_status             String?   @db.VarChar(50)
+  client_full_response      String?   @db.LongText
+  isUpcomingModelLead       Int?      @default(0) @db.TinyInt
+  api_name                  String?   @db.VarChar(255)
+  isLoanLead                Int?      @default(0)
+  pan_number                String?   @db.VarChar(15)
+  leadCategory              Int?      @default(0) @db.TinyInt
+  carRegistrationDate       DateTime? @db.Date
+  utm_campaign              String?   @db.VarChar(100)
+  carRegistrationNumber     String?   @db.VarChar(15)
+  carRegistrationMonth      String?   @db.VarChar(45)
+  carRegistrationYear       String?   @db.VarChar(45)
+  previoiusPolicyExipreDate String?   @db.VarChar(45)
+  pincode                   Int?
+  fuelType                  Int?      @db.TinyInt
+  variantName               String?   @db.VarChar(50)
+  expected_delivery         String?   @db.VarChar(45)
+  isBestDrive               Int?      @default(0) @db.TinyInt
+  utm_medium                String?   @db.VarChar(45)
+  pId                       String?   @db.VarChar(45)
+  mahindraApi               Boolean?  @default(false)
+  mahindraApiResponse       String?   @db.Text
+  updated_at                DateTime? @default(now()) @db.Timestamp(0)
+  whatsAppUpdates           String?   @db.VarChar(5)
+  fullAddress               String?   @db.VarChar(250)
+  planToBuy                 String?   @db.VarChar(25)
+  callbackDay               String?   @db.VarChar(12)
+  callbackTime              String?   @db.VarChar(12)
+  stateName                 String?   @db.VarChar(45)
+  interestedModels          String?   @db.VarChar(100)
+
+  @@index([cityName], map: "cityName")
+  @@index([emailAddress], map: "emailAddress")
+  @@index([isPushedToClientApi], map: "isPushedToClientApi")
+  @@index([isOTPVerified], map: "isotpverified")
+  @@index([leadCaptureDateTime], map: "leadCaptureDateTime")
+  @@index([leadSource], map: "leadSource")
+  @@index([modelId], map: "modelId")
+  @@index([otpValue], map: "otpValue")
+  @@index([phoneNumber], map: "phoneNumber")
+  @@index([saltValue], map: "saltValue")
+}
+
+model tbllicenses {
+  licenseId           Int     @id @default(autoincrement()) @db.UnsignedInt
+  projectId           Int     @default(0)
+  apiKey              String? @db.VarChar(100)
+  credits             BigInt  @default(0)
+  status              Int     @default(0) @db.TinyInt
+  whitelistedIP       String? @db.VarChar(1000)
+  creditAlert1        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert2        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert3        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert4        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert5        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert6        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert7        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert8        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert9        BigInt  @default(0) @db.UnsignedBigInt
+  creditAlert10       BigInt  @default(0) @db.UnsignedBigInt
+  usedCredits         BigInt  @default(0) @db.UnsignedBigInt
+  isCreditAlert1Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert2Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert3Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert4Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert5Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert6Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert7Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert8Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert9Sent  Int     @default(0) @db.TinyInt
+  isCreditAlert10Sent Int     @default(0) @db.TinyInt
+
+  @@index([apiKey], map: "apiKey")
+  @@index([projectId], map: "projectId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbllikedislike {
+  rId           Int    @id @default(autoincrement())
+  reviewId      Int
+  userId        String @db.VarChar(45)
+  isLikeDislike Int    @db.TinyInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblloanusers {
+  userId              BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  leadId              BigInt?   @db.UnsignedBigInt
+  dateOfBirth         DateTime? @db.Date
+  residenceType       Int?      @db.UnsignedTinyInt
+  address             String?   @db.VarChar(500)
+  pincode             Int?
+  residencSince       DateTime? @db.Date
+  employmentType      Int?      @db.TinyInt
+  companyName         String?   @db.VarChar(200)
+  joiningDate         DateTime? @db.Date
+  workExperience      Int?      @db.TinyInt
+  panCard             String?   @db.VarChar(15)
+  income              BigInt?
+  existingEMI         Int?
+  incomeProof         Int?      @db.TinyInt
+  planningToBuy       Int?      @db.TinyInt
+  leadCaptureDateTime DateTime? @db.DateTime(0)
+}
+
+model tblmenus {
+  menuId   Int     @id @default(autoincrement())
+  menuName String? @db.VarChar(255)
+}
+
+model tblmileagefaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+  updatedDateTime DateTime? @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodelbodytype {
+  modelBodyTypeId   Int     @id @default(autoincrement())
+  modelBodyTypeName String? @db.VarChar(100)
+  status            Int     @default(1) @db.TinyInt
+  seqNum            Int?    @db.TinyInt
+
+  @@index([modelBodyTypeName(length: 10)], map: "bodyType")
+  @@index([status], map: "status")
+}
+
+model tblmodelcolors {
+  id              Int     @id @default(autoincrement())
+  modelId         Int?
+  colorId         Int?
+  fileName        String? @db.VarChar(100)
+  fileNameAltText String? @db.VarChar(100)
+
+  @@index([colorId], map: "colorId")
+  @@index([modelId], map: "modelId")
+}
+
+model tblmodelpagecontent {
+  contentId              Int      @id @default(autoincrement())
+  modelId                Int
+  overviewContent        String?  @db.Text
+  priceContent           String?  @db.Text
+  dimensionsContent      String?  @db.Text
+  engineSpecsContent     String?  @db.Text
+  videoContent           String?  @db.Text
+  competitorsContent     String?  @db.Text
+  reviewsContent         String?  @db.Text
+  variantsContent        String?  @db.MediumText
+  newsContent            String?  @db.Text
+  onRoadPriceContent     String?  @db.Text
+  keyFeaturesContent     String?  @db.Text
+  mileageContent         String?  @db.Text
+  galleryContent         String?  @db.Text
+  coloursContent         String?  @db.Text
+  prosConsContent        String?  @db.Text
+  ViewContent            String?  @map("360ViewContent") @db.Text
+  sparePartsContent      String?  @db.Text
+  serviceCostContent     String?  @db.LongText
+  dealersContent         String?  @db.Text
+  brochureContent        String?  @db.Text
+  createEMIContent       String?  @db.Text
+  createLoanContent      String?  @db.Text
+  createInsuranceContent String?  @db.Text
+  addedDateandTime       DateTime @default(now()) @db.DateTime(0)
+  updateDateandTime      DateTime @default(now()) @db.DateTime(0)
+  monthlySalesContent    String?  @db.Text
+  comparisonContent      String?  @db.Text
+  faqContent             String?  @db.Text
+  offersContent          String?  @db.Text
+  latestUpdateContent    String?  @db.Text
+  colorWiseTitle         String?  @db.Text
+  colorWiseContent       String?  @db.Text
+
+  @@index([modelId], map: "idx_tblmodelpagecontent_modelId")
+}
+
+model tblmodelpagetypes {
+  pageTypeId   Int     @id @default(autoincrement())
+  pageTypeName String? @db.VarChar(255)
+  status       Int     @default(1) @db.TinyInt
+}
+
+model tblmodelpowertrains {
+  modelPowertrainId    Int      @id @default(autoincrement())
+  modelId              Int      @default(0) @db.SmallInt
+  fuelTankCapacity     Int?     @db.SmallInt
+  kerbWeight           Int?     @db.SmallInt
+  engineDisplacement   Decimal? @db.Decimal(5, 2)
+  cubicCapacity        Int?     @db.SmallInt
+  fuelType             String?  @db.VarChar(255)
+  fuelTypeSubCategory  String?  @db.VarChar(255)
+  transmissionType     String?  @db.VarChar(100)
+  transmissionSubType  String?  @db.VarChar(100)
+  isFourByFour         Boolean?
+  cylinders            Int?     @db.TinyInt
+  powerPS              Int?     @db.SmallInt
+  powerWeight          Decimal? @db.Decimal(5, 2)
+  powerMinRPM          Int?     @db.SmallInt
+  powerMaxRPM          Int?     @db.SmallInt
+  torqueNM             Int?     @db.SmallInt
+  torqueWeight         Decimal? @db.Decimal(6, 2)
+  torqueMinRPM         Int?     @db.SmallInt
+  torqueMaxRPM         Int?     @db.SmallInt
+  transmissionSpeed    Int?     @db.TinyInt
+  claimedFE            Decimal? @db.Decimal(5, 2)
+  realWorldMileage     Decimal? @db.Decimal(5, 2)
+  powerTrain           String?  @db.VarChar(100)
+  numGears             Int?
+  numMotors            Int?
+  batteryCapacity      Decimal? @default(0.0) @db.Decimal(5, 1)
+  acChargingOutput     Decimal? @db.Decimal(5, 1)
+  acChargingTime       Int?
+  dcChargingOutput     String?  @db.VarChar(255)
+  dcFastChargingTime   String?  @db.VarChar(255)
+  claimedRange         Int?
+  realWorldRange       Int?
+  batteryWarrantyKm    Int?
+  batteryWarrantyYear  Int?
+  standardWarrantyKm   String?  @db.VarChar(255)
+  standardWarrantyYear String?  @db.VarChar(50)
+  motorType            String?  @db.VarChar(255)
+  drivetrain           Int?     @db.TinyInt
+  motorWarrantyKm      Int?
+  motorWarrantyYear    Int?
+  cylinderCapacity     Decimal? @db.Decimal(5, 1)
+  highwayMileage       String?  @db.VarChar(220)
+  cityMileage          String?  @db.VarChar(220)
+
+  @@index([modelId], map: "idx_tblmodelpowertrains_modelId")
+}
+
+model tblmodelpricefaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedDateTime DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodelproscons {
+  id              Int       @id @default(autoincrement())
+  modelId         Int?
+  prosConsDesc    String?   @db.Text
+  addedDateTime   DateTime? @db.DateTime(0)
+  addedBy         Int?
+  type            Int?      @db.TinyInt
+  prosConsHeading String?   @db.Text
+
+  @@index([modelId], map: "modelId")
+}
+
+model tblmodelrivals {
+  rivalId       Int       @id @default(autoincrement())
+  modelId       Int?
+  rivalModelIds String?   @db.VarChar(500)
+  addedBy       Int?
+  addedDateTime DateTime? @db.DateTime(0)
+
+  @@index([modelId], map: "modelId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodels {
+  modelId             Int       @id @default(autoincrement()) @db.SmallInt
+  modelName           String?   @db.VarChar(100)
+  brandId             Int?      @db.SmallInt
+  modelBodyTypeId     Int?      @db.SmallInt
+  modelTypeId         Int?      @db.SmallInt
+  isUpcoming          Boolean?
+  modelDesc           String?   @db.Text
+  launchDate          DateTime? @db.Date
+  length              Int?      @db.SmallInt
+  width               Int?      @db.SmallInt
+  height              Int?      @db.SmallInt
+  wheelBase           Int?      @db.SmallInt
+  bootSpace           Int?      @db.SmallInt
+  groundClearance     Int?      @db.SmallInt
+  tyreSize            String?   @db.VarChar(50)
+  tyreSizeTop         String?   @db.VarChar(255)
+  seats               Int?      @db.TinyInt
+  segmentId           Int?
+  safetyRating        String?   @db.VarChar(255)
+  brochurePath        String?   @db.VarChar(500)
+  isBaseModel         Boolean   @default(false)
+  numPowerTrain       Int?      @db.TinyInt
+  modelSlug           String?   @db.VarChar(45)
+  totalViews          Int       @default(0)
+  expectedBasePrice   Int?      @db.UnsignedInt
+  expectedTopPrice    Int?      @db.UnsignedInt
+  discontinuedYear    Int?      @db.Year
+  isGenFacelift       Int?      @db.TinyInt
+  linkedModelId       Int?      @default(0)
+  isAutoExpo          Int?      @default(0) @db.TinyInt
+  brandWebsiteModelId String?   @db.Text
+  combinedModelId     String?   @db.VarChar(45)
+
+  @@index([brandId], map: "idx_tblmodels_brandId")
+  @@index([isUpcoming], map: "idx_tblmodels_isUpcoming")
+  @@index([modelBodyTypeId], map: "idx_tblmodels_modelBodyTypeId")
+  @@index([modelName(length: 10)], map: "idx_tblmodels_modelName")
+  @@index([modelSlug(length: 10)], map: "idx_tblmodels_modelSlug")
+  @@index([modelTypeId], map: "idx_tblmodels_modelTypeId")
+  @@index([totalViews], map: "idx_tblmodels_totalViews")
+  @@index([isUpcoming], map: "isUpcoming")
+  @@index([launchDate], map: "launchDate")
+  @@index([segmentId], map: "segmentId")
+}
+
+model tblmodels2 {
+  modelId      Int     @id @default(autoincrement()) @db.UnsignedSmallInt
+  modelName    String  @db.VarChar(100)
+  brandId      Int     @db.UnsignedSmallInt
+  modalType    String? @db.VarChar(50)
+  segment      String? @db.VarChar(20)
+  brochurePath String? @db.VarChar(500)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblmodels_view {
+  visitor_ip String   @db.VarChar(50)
+  modelId    Int
+  dateTime   DateTime @default(now()) @db.DateTime(0)
+
+  @@index([modelId], map: "idx_tblmodels_view_modelId")
+  @@index([visitor_ip(length: 15)], map: "idx_tblmodels_view_visitor_ip")
+  @@ignore
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodelsfaq {
+  modelFaqId      Int       @id @default(autoincrement())
+  modelId         Int?
+  category        Int?      @db.TinyInt
+  categoryName    String?   @db.VarChar(200)
+  categoryIntro   String?   @db.VarChar(2000)
+  addedBy         Int?
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+  categoryId      Int?      @db.TinyInt
+  pvId            Int?
+  pvType          Int?
+
+  @@index([modelId], map: "modelId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodeltype {
+  modelTypeId   Int     @id @default(autoincrement())
+  modelTypeName String? @db.VarChar(100)
+  status        Int     @default(1) @db.TinyInt
+
+  @@index([status], map: "status")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblmodelvariantimages {
+  imageId             Int       @id @default(autoincrement()) @db.SmallInt
+  modelId             Int?      @db.SmallInt
+  variantId           Int?
+  modelImageName      String?   @db.VarChar(255)
+  modelImageType      Int?      @db.TinyInt
+  modelImageAltText   String?   @db.VarChar(255)
+  variantImageName    String?   @db.VarChar(255)
+  variantImageType    Int?      @db.TinyInt
+  variantImageAltText String?   @db.VarChar(255)
+  uploadedDateTime    DateTime? @db.DateTime(0)
+  uploadedBy          Int?
+  is360view           Int?      @default(0) @db.TinyInt
+  colorId             Int?      @default(0)
+  isMainImage         Int?      @default(0) @db.TinyInt
+
+  @@index([modelId], map: "modelId")
+  @@index([modelImageType], map: "modelImageType")
+  @@index([variantId], map: "variantId")
+}
+
+model tblmonthlysales {
+  saleId          Int       @id @default(autoincrement())
+  modelId         Int?      @default(0)
+  year            Int?      @db.Year
+  month           Int?
+  numSales        Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+  lastUpdatedBy   Int?
+
+  @@index([modelId], map: "modelId")
+  @@index([month], map: "month")
+  @@index([year], map: "year")
+}
+
+model tblmostavailablecars {
+  id      Int     @id @default(autoincrement())
+  orderId Int?
+  pageUrl String? @db.VarChar(255)
+  imgUrl  String? @db.VarChar(255)
+  title   String? @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblnotification {
+  notificationId   Int       @id @default(autoincrement())
+  notificationText String?   @db.VarChar(2000)
+  isOpen           Int?      @default(0) @db.TinyInt
+  userId           String?   @db.VarChar(45)
+  addedDateTime    DateTime? @db.DateTime(0)
+  notificationType Int?      @db.TinyInt
+  category         Int?      @db.TinyInt
+  rqId             Int?
+}
+
+model tbloffercitytagging {
+  taggingId Int  @id @default(autoincrement())
+  cityId    Int?
+  offerId   Int?
+
+  @@index([cityId], map: "cityId")
+  @@index([offerId], map: "offerId")
+}
+
+model tbloffercontent {
+  qid             Int       @id @default(autoincrement())
+  modelId         Int?
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.LongText
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+  updatedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblofferhistory {
+  historyId       Int       @id @default(autoincrement())
+  offerId         Int?
+  startDate       DateTime? @db.DateTime(0)
+  endDate         DateTime? @db.DateTime(0)
+  addedBy         Int?
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+
+  @@index([offerId], map: "offerId")
+}
+
+model tbloffers {
+  offerId         Int       @id @default(autoincrement())
+  modelId         Int?
+  title           String?   @db.VarChar(500)
+  pageUrl         String?   @db.VarChar(255)
+  imageFile       String?   @db.VarChar(255)
+  imageAltText    String?   @db.VarChar(100)
+  metaTitle       String?   @db.VarChar(500)
+  metaDesc        String?   @db.VarChar(1000)
+  metaKeywords    String?   @db.VarChar(1000)
+  bodyContent     String?   @db.Text
+  endContent      String?   @db.Text
+  offerStatus     Int?      @default(0) @db.TinyInt
+  expireDateTime  DateTime? @db.DateTime(0)
+  addedBy         Int?
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+  introContent    String?   @db.VarChar(1000)
+  uniqueCode      String?   @db.VarChar(45)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tbloffers_view {
+  visitor_ip String   @db.VarChar(30)
+  offerId    Int
+  dateTime   DateTime @default(now()) @db.DateTime(0)
+
+  @@index([dateTime], map: "dateTime")
+  @@index([offerId], map: "offerId")
+  @@index([visitor_ip], map: "visitor_ip")
+  @@ignore
+}
+
+model tbloffertagging {
+  taggingId Int @id @default(autoincrement())
+  cityId    Int
+  offerId   Int
+
+  @@index([cityId], map: "mbId")
+  @@index([offerId], map: "offerId")
+}
+
+model tblonroadpriceconfig {
+  configId              Int       @id @default(autoincrement())
+  countryId             Int?
+  registrationCharges   Int?      @db.UnsignedInt
+  otherCharges          Int?      @db.UnsignedInt
+  fasttagCharges        Int?      @db.UnsignedInt
+  endorsementCharges    Int?      @db.UnsignedInt
+  roadSafetyCessCharges Float?    @db.Float
+  updatedBy             Int?
+  updatedDateTime       DateTime? @db.DateTime(0)
+}
+
+model tblonroadpricefaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedDateTime DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+}
+
+model tblonroadpricerules {
+  ruleId                   Int     @id @default(autoincrement())
+  stateId                  Int?
+  cityId                   Int?
+  registrationCharges      Int?    @db.UnsignedInt
+  otherCharges             Int?    @db.UnsignedInt
+  fasttagCharges           Int?    @db.UnsignedInt
+  hypothecationEndorsement Int?    @db.UnsignedInt
+  roadSafety               Float?  @db.Float
+  seaterMin                Int?    @db.TinyInt
+  seaterMax                Int?    @db.TinyInt
+  ccMin                    Int?    @db.SmallInt
+  ccMax                    Int?    @db.SmallInt
+  factoryPriceStart        Int?    @db.UnsignedInt
+  factoryPriceUpto         Int?    @db.UnsignedInt
+  showroomPriceStart       Int?    @db.UnsignedInt
+  showroomPriceUpto        Int?    @db.UnsignedInt
+  petrol                   Float?  @db.Float
+  petrolUnit               Int?    @default(0) @db.TinyInt
+  cng                      Float?  @db.Float
+  cngUnit                  Int     @default(0) @db.TinyInt
+  diesel                   Float?  @db.Float
+  dieselUnit               Int     @default(0) @db.TinyInt
+  electric                 Float?  @db.Float
+  electricUnit             Int     @default(0) @db.TinyInt
+  minimum                  Int?
+  minimumUnit              Int?    @default(0) @db.TinyInt
+  additionChargeCat1       Int?
+  additionalCharge1        Float?  @db.Float
+  cat1Unit                 Int?    @db.TinyInt
+  additionChargeCat2       Int?
+  additionalCharge2        Float?  @db.Float
+  cat2Unit                 Int?    @db.TinyInt
+  comments                 String? @db.VarChar(500)
+  additionChargeCat3       Int?
+  additionalCharge3        Float?  @db.Float
+  cat3Unit                 Int     @default(0) @db.TinyInt
+  additionChargeCat4       Int?
+  additionalCharge4        Float?  @db.Float
+  cat4Unit                 Int?    @db.TinyInt
+
+  @@index([ccMax], map: "ccMax")
+  @@index([ccMin], map: "ccMin")
+  @@index([cityId], map: "cityId")
+  @@index([factoryPriceStart], map: "factoryPriceStart")
+  @@index([factoryPriceUpto], map: "factoryPriceUpto")
+  @@index([showroomPriceStart], map: "showroomPriceStart")
+  @@index([showroomPriceUpto], map: "showroomPriceUpto")
+  @@index([stateId], map: "stateId")
+}
+
+model tblpagecategories {
+  pageCategoryId Int     @id @default(autoincrement())
+  categoryName   String? @db.VarChar(100)
+}
+
+model tblperformancevalue {
+  id           Int      @id @default(autoincrement())
+  powerPS      Decimal  @db.Decimal(10, 2)
+  torqueNM     Decimal  @db.Decimal(10, 2)
+  cylinders    Decimal  @db.Decimal(10, 2)
+  powerWeight  Decimal  @db.Decimal(10, 2)
+  torqueWeight Decimal  @db.Decimal(10, 2)
+  numGears     Decimal  @db.Decimal(10, 2)
+  created_at   DateTime @default(now()) @db.Timestamp(0)
+  MT           Decimal  @db.Decimal(10, 2)
+  ACMT         Decimal  @db.Decimal(10, 2)
+  AMT          Decimal  @db.Decimal(10, 2)
+  DCT          Decimal  @db.Decimal(10, 2)
+  TC           Decimal  @db.Decimal(10, 2)
+  CVT          Decimal  @db.Decimal(10, 2)
+  FWD          Decimal  @db.Decimal(10, 2)
+  RWD          Decimal  @db.Decimal(10, 2)
+  AWD_4WD      Decimal  @db.Decimal(10, 2)
+}
+
+model tblperiodicmaintenancecost {
+  id                Int      @id @default(autoincrement())
+  modelId           Int
+  modelPowertrainId Int?
+  kmDriven          Int
+  cost              Int?
+  addedDate         DateTime @default(now()) @db.Timestamp(0)
+  updatedDate       DateTime @default(now()) @db.Timestamp(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblpowertrainvariantpagecontent {
+  contentId Int     @id @default(autoincrement())
+  type      Int?    @db.TinyInt
+  pvId      Int?
+  content   String? @db.Text
+}
+
+model tblpricehistory {
+  historyId     Int       @id @default(autoincrement())
+  variantId     Int?
+  month         Int?      @db.TinyInt
+  year          Int?      @db.Year
+  price         Int?      @db.UnsignedInt
+  addedBy       Int?
+  addedDateTime DateTime? @db.DateTime(0)
+
+  @@index([month], map: "month")
+  @@index([variantId], map: "variantId")
+  @@index([year], map: "year")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblratings {
+  ratingId               Int       @id @default(autoincrement())
+  userId                 Int?
+  variantId              Int?
+  performance            Int?
+  mileage                Int?
+  maintainance           Int?
+  style                  Int?
+  comfort                Int?
+  features               Int?
+  safety                 Int?
+  valueForMoney          Int?
+  overallRating          Float?    @db.Float
+  dateAndTime            DateTime  @default(now()) @db.Timestamp(0)
+  ratingIp               String?   @db.VarChar(20)
+  isApprovedRejected     Int?      @default(0) @db.TinyInt
+  rejectedReason         String?   @db.VarChar(255)
+  approvedRejectBy       Int?
+  approvedRejectDateTime DateTime? @db.DateTime(0)
+}
+
+model tblredirecturl {
+  urlId Int     @id @default(autoincrement())
+  url1  String? @db.VarChar(1000)
+  url2  String? @db.VarChar(1000)
+
+  @@index([url2(length: 400)], map: "url2")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblrtoState {
+  stateId   BigInt?
+  stateName String? @db.Text
+
+  @@ignore
+}
+
+model tblrtolist {
+  rtoId   Int     @id @default(autoincrement())
+  rtoCode String? @db.VarChar(45)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblsavefilters {
+  colName   String? @db.VarChar(100)
+  colValue  String? @db.VarChar(255)
+  tableName String? @db.VarChar(100)
+  pageName  String? @db.VarChar(100)
+  adminId   Int?
+
+  @@index([adminId], map: "adminId")
+  @@ignore
+}
+
+model tblsegments {
+  segmentId   Int     @id @default(autoincrement()) @db.TinyInt
+  segmentName String? @db.VarChar(100)
+  minLength   Int?
+  maxLength   Int?
+}
+
+model tblsellcaranalytic {
+  id              Int       @id @default(autoincrement())
+  brand           Int?
+  year            Int?
+  model           Int?
+  fuelType        Int?
+  transmission    Int?
+  variant         Int?
+  ownership       Int?
+  km_driven       Int?
+  car_location    Int?
+  planned_selling Int?
+  name            Int?
+  email           Int?
+  mobile          Int?
+  isGetCarPrice   Int?
+  appointmentPage Int?
+  appointmentBook Int?
+  updateDateTime  DateTime? @db.DateTime(0)
+  totalUsers      Int?
+}
+
+model tblsellcaranalyticFitler {
+  id              Int       @id @default(autoincrement())
+  brand           Int?
+  year            Int?
+  model           Int?
+  fuelType        Int?
+  transmission    Int?
+  variant         Int?
+  ownership       Int?
+  km_driven       Int?
+  car_location    Int?
+  planned_selling Int?
+  name            Int?
+  email           Int?
+  mobile          Int?
+  getOtp          Int?
+  otpVerified     Int?
+  carPrice        Int?
+  appointmentPage Int?
+  appointment     Int?
+  updateDateTime  DateTime? @db.DateTime(0)
+  totalUsers      Int?      @default(0)
+  inspectioncity  Int?      @default(0)
+  inspectionstore Int?      @default(0)
+  inspectiondate  Int?      @default(0)
+  inspectiontime  Int?      @default(0)
+  userAddress     Int?      @default(0)
+  userPincode     Int?      @default(0) @db.TinyInt
+  userCity        Int?      @default(0) @db.TinyInt
+  userState       Int?      @default(0) @db.TinyInt
+}
+
+model tblsellcarfaqs {
+  qid             Int       @id @default(autoincrement())
+  quesText        String?   @db.VarChar(500)
+  ansText         String?   @db.Text
+  sequence        Int?
+  addedBy         String?   @db.VarChar(50)
+  addedDateTime   DateTime? @db.DateTime(0)
+  updatedBy       String?   @db.VarChar(50)
+  updatedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblsellcarlead {
+  leadID                Int       @id @default(autoincrement())
+  brandId               Int?
+  manufacturingYear     Int?
+  modelId               Int?
+  fuelType              Int?      @db.TinyInt
+  transmissionType      Int       @db.TinyInt
+  variantId             Int?
+  state                 Int?
+  carRegistrationNumber String?   @db.VarChar(50)
+  rtoCode               String?   @db.VarChar(10)
+  kilometresDriven      String?   @db.VarChar(50)
+  ownership             Int?      @db.TinyInt
+  carLocation           String?   @db.VarChar(100)
+  plannedSelling        String?   @db.VarChar(50)
+  name                  String?   @db.VarChar(50)
+  email                 String?   @db.VarChar(100)
+  phoneNumber           String?   @db.VarChar(20)
+  leadCaptureDateTime   DateTime? @db.DateTime(0)
+  leadSource            String?   @db.VarChar(50)
+  manualEnterVariant    String?   @db.VarChar(100)
+  browser               String?   @db.VarChar(50)
+  OS                    String?   @db.VarChar(50)
+  device                String?   @db.VarChar(50)
+  ipAddress             String?   @db.VarChar(50)
+  otpValue              Int?
+  isOTPVerified         Int?      @default(0) @db.TinyInt
+  isPushedToClient      Boolean?  @default(false)
+  apiResponse           String?   @db.VarChar(255)
+  spinyapi              Int?      @default(0)
+  spinnyPayload         String?   @db.Text
+  spinnyCarPrice        String?   @db.VarChar(80)
+  spinyapiresponse      String?   @db.VarChar(255)
+  estimateCarPrice      String?   @db.VarChar(100)
+  modelName             String?   @db.VarChar(100)
+  variantName           String?   @db.VarChar(100)
+  isAppointmentBook     String?   @db.VarChar(45)
+  apiFullResponse       String?   @db.LongText
+  inspectionCity        String?   @db.VarChar(200)
+  zoneId                Int?
+  tokenResponse         String?   @db.LongText
+  cars24LeadData        String?   @db.Text
+  appointmentLeadData   String?   @db.Text
+  userAddress           String?   @db.VarChar(1000)
+  userPincode           String?   @db.VarChar(10)
+  pincodeCity           String?   @db.VarChar(45)
+  pincodeState          String?   @db.VarChar(45)
+}
+
+model tblsellcarleadtemp {
+  lead_id           Int       @id @default(autoincrement())
+  userString        String?   @db.VarChar(255)
+  brand_id          Int?
+  year              String?   @db.VarChar(10)
+  model_id          Int?
+  fuel_type         String?   @db.VarChar(20)
+  transmission_type String?   @db.VarChar(20)
+  variantId         Int?
+  carLocation       String?   @db.VarChar(100)
+  ownership         String?   @db.VarChar(20)
+  km_driven         String?   @db.VarChar(60)
+  plannedSelling    String?   @db.VarChar(50)
+  name              String?   @db.VarChar(100)
+  email             String?   @db.VarChar(255)
+  mobile            String?   @db.VarChar(20)
+  getOtp            String?   @db.VarChar(6)
+  otpVerify         Int?      @default(0) @db.TinyInt
+  isGetCarPrice     String?   @db.VarChar(100)
+  inspectionCity    Int?      @default(0) @db.TinyInt
+  inspectionStore   Int?      @default(0) @db.TinyInt
+  inspectionDate    Int?      @default(0) @db.TinyInt
+  inspectionTime    Int?      @default(0) @db.TinyInt
+  appointmentPage   String?   @db.VarChar(45)
+  userAddress       Int?      @db.TinyInt
+  appointmentBook   String?   @db.VarChar(255)
+  addedDateTime     DateTime? @db.DateTime(0)
+  isUpdated         Int?      @default(0) @db.TinyInt
+  userPincode       Int?      @default(0) @db.TinyInt
+  userCity          Int?      @default(0) @db.TinyInt
+  userState         Int?      @default(0) @db.TinyInt
+}
+
+model tblseo {
+  seoId             Int       @id @default(autoincrement())
+  pageId            Int?
+  metaTitle         String?   @db.VarChar(500)
+  metaDescription   String?   @db.Text
+  metakeyword       String?   @db.VarChar(500)
+  canonicalUrl      String?   @db.VarChar(500)
+  schemaContent     String?   @db.Text
+  schemaTags        String?   @db.Text
+  ogTags            String?   @db.Text
+  addedBy           Int?
+  addedDateTime     DateTime? @db.DateTime(0)
+  modelId           Int?
+  pageTypeId        Int?
+  modelPowertrainId Int?
+  variantId         Int?
+
+  @@index([modelId], map: "modelId")
+  @@index([pageId], map: "pageId")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblseomanagement {
+  name String @db.VarChar(100)
+  data String @db.LongText
+
+  @@index([name], map: "name")
+  @@ignore
+}
+
+model tblservicenetwork {
+  id             Int @id @default(autoincrement())
+  brandId        Int
+  serviceNetwork Int
+}
+
+model tblshorturl {
+  id         Int      @id @default(autoincrement())
+  full_url   String?  @db.Text
+  short_url  String?  @db.Text
+  ip_address String?  @db.VarChar(100)
+  datetime   DateTime @default(now()) @db.DateTime(0)
+
+  @@index([datetime], map: "datetime")
+}
+
+model tblsizevalue {
+  id               Int      @id @default(autoincrement())
+  volume           Decimal  @db.Decimal(10, 2)
+  wheelbase        Decimal  @db.Decimal(10, 2)
+  ground_clearance Decimal  @db.Decimal(10, 2)
+  boot_space       Decimal  @db.Decimal(10, 2)
+  tyre_size        Decimal  @db.Decimal(10, 2)
+  created_at       DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tblsmslog {
+  logId        Int       @id @default(autoincrement())
+  mobileNumber String?   @db.VarChar(45)
+  dateTime     DateTime? @db.DateTime(0)
+  ipAddress    String?   @db.VarChar(50)
+}
+
+model tblspamkeywords {
+  id            Int      @id @default(autoincrement())
+  keyword       String   @unique(map: "keyword") @db.VarChar(255)
+  addedBy       Int?
+  addedDateTime DateTime @default(now()) @db.Timestamp(0)
+}
+
+model tblspinnyrto {
+  id                Int    @id @default(autoincrement())
+  code              String @db.VarChar(10)
+  city_id           Int
+  city_display_name String @db.VarChar(100)
+}
+
+model tblspinnyvariants {
+  id                Int     @id @default(autoincrement())
+  variantId         Int
+  transmission      String  @db.VarChar(50)
+  make              String  @db.VarChar(100)
+  model             String  @db.VarChar(100)
+  variant           String  @db.VarChar(200)
+  fuel_type         String  @db.VarChar(50)
+  launch_year       String  @db.VarChar(10)
+  discontinued_year String? @db.VarChar(10)
+  body_type         String  @db.VarChar(50)
+}
+
+model tblstates {
+  stateId          Int     @id @db.TinyInt
+  stateName        String? @db.VarChar(100)
+  countryId        Int     @default(0) @db.UnsignedTinyInt
+  stateCode        String? @db.VarChar(50)
+  shortCode        String? @db.VarChar(50)
+  isTodayFuelPrice Int?    @default(0) @db.TinyInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblsubfeaturecategories {
+  subCategoryId     Int     @id @default(autoincrement())
+  subCategoryName   String? @db.VarChar(50)
+  subCategoryStatus Int     @default(1) @db.TinyInt
+  categoryId        Int?    @db.TinyInt
+
+  @@index([categoryId], map: "categoryId")
+}
+
+model tblsubfeaturesnew {
+  subFeatureId   Int    @id @default(autoincrement())
+  featureId      Int
+  subFeatureName String @db.VarChar(255)
+
+  @@index([featureId], map: "featureId")
+}
+
+model tblsubscribers {
+  subscriberId  Int       @id @default(autoincrement())
+  emailAddress  String?   @db.VarChar(150)
+  source        String?   @db.VarChar(50)
+  addedDateTime DateTime? @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbltagging {
+  taggingId      Int @id @default(autoincrement())
+  mbId           Int
+  contentId      Int
+  type           Int @default(0)
+  tagContentType Int @default(0) @db.TinyInt
+
+  @@index([contentId], map: "contentId")
+  @@index([mbId], map: "mbId")
+  @@index([tagContentType], map: "tagContentType")
+  @@index([type], map: "type")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbltemplatecategories {
+  categoryId     Int     @id @default(autoincrement())
+  categoryName   String? @db.VarChar(100)
+  categoryStatus Int     @default(1) @db.TinyInt
+  type           Int?    @db.TinyInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbltemplates {
+  templateId              Int       @id @default(autoincrement())
+  templateName            String?   @db.VarChar(255)
+  templateType            Int?      @db.TinyInt
+  categoryId              Int?      @db.TinyInt
+  subcategoryId           Int?      @db.TinyInt
+  titleTemplate           String?   @db.VarChar(500)
+  urlTemplate             String?   @db.VarChar(500)
+  metaTitleTemplate       String?   @db.VarChar(500)
+  metaDescriptionTemplate String?   @db.Text
+  metaKeywordTemplate     String?   @db.Text
+  socialTextTemplate      String?   @db.Text
+  introTemplate           String?   @db.Text
+  bodyTemplate            String?   @db.LongText
+  status                  Int?      @db.TinyInt
+  addedBy                 Int?
+  addedDateTime           DateTime? @default(now()) @db.DateTime(0)
+  priceContent            String?   @db.LongText
+  engineSpecContent       String?   @db.LongText
+  featuresContent         String?   @db.LongText
+  pMaintCostContent       String?   @db.LongText
+  runCostContent          String?   @db.LongText
+  dimensionContent        String?   @db.LongText
+  variantContent          String?   @db.LongText
+  verdictContent          String?   @db.LongText
+  colorContent            String?   @db.Text
+  endContent              String?   @db.Text
+  descContent             String?   @db.Text
+
+  @@index([categoryId], map: "categoryId")
+  @@index([templateType], map: "templateType")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbltemplatesubcategories {
+  subCategoryId     Int     @id @default(autoincrement())
+  subCategoryName   String? @db.VarChar(100)
+  subCategoryStatus Int     @default(1) @db.TinyInt
+  categoryId        Int     @db.TinyInt
+
+  @@index([categoryId], map: "categoryId")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblthirdpartyads {
+  tpadId          Int       @id @default(autoincrement())
+  tpCode          String?   @db.Text
+  tpStatus        Int?      @default(1) @db.TinyInt
+  addedDateTime   DateTime? @db.DateTime(0)
+  addedBy         Int?
+  updatedDateTime DateTime? @db.DateTime(0)
+  updatedBy       Int?
+  adSize          Int?      @db.TinyInt
+  device          Int?      @db.TinyInt
+  placementType   Int?      @db.TinyInt
+  isGeoTargeting  Int?      @default(0) @db.TinyInt
+  cityIds         String?   @db.VarChar(2000)
+}
+
+model tblunknowncities {
+  id            Int       @id @default(autoincrement())
+  cityName      String?   @db.VarChar(255)
+  addedDateTime DateTime? @db.DateTime(0)
+}
+
+model tblurls {
+  id       Int     @id @default(autoincrement())
+  longURL  String? @db.VarChar(500)
+  shortURL String? @db.VarChar(50)
+}
+
+model tblusers {
+  userId            Int       @id @default(autoincrement())
+  username          String?   @db.VarChar(50)
+  displayName       String?   @db.VarChar(30)
+  mobilenumber      String?   @db.VarChar(15)
+  emailAddress      String?   @db.VarChar(100)
+  otpvalue          String?   @db.VarChar(6)
+  status            Int       @default(1) @db.TinyInt
+  gender            Int       @default(0) @db.TinyInt
+  dob               DateTime? @db.DateTime(0)
+  qualification     String?   @db.VarChar(30)
+  maritalStatus     Int       @default(0) @db.TinyInt
+  numOfCars         Int       @default(0) @db.TinyInt
+  modelId           Int       @default(0)
+  brandId           Int       @default(0) @db.MediumInt
+  countryId         Int       @default(0) @db.MediumInt
+  pincode           String?   @db.VarChar(10)
+  occupation        String?   @db.VarChar(30)
+  cityName          String?   @db.VarChar(50)
+  stateName         String?   @db.VarChar(50)
+  registerDateTime  DateTime? @default(now()) @db.DateTime(0)
+  lastLoginDateTime DateTime  @default(now()) @db.DateTime(0)
+  registerSource    String?   @db.VarChar(15)
+  industryId        Int?      @db.SmallInt
+
+  @@index([mobilenumber], map: "idx_tblusers_mobilenumber")
+  @@index([registerDateTime, lastLoginDateTime], map: "idx_tblusers_registerDateTime_lastLoginDateTime")
+  @@index([registerSource], map: "idx_tblusers_registerSource")
+  @@index([status], map: "idx_tblusers_status")
+}
+
+model tblusersearches {
+  searchId      Int     @id @default(autoincrement())
+  userSaltValue String? @db.VarChar(50)
+  modelId       Int?
+  brandId       Int?
+  ipAddress     String? @db.VarChar(50)
+
+  @@index([userSaltValue], map: "userSaltValue")
+}
+
+model tblvariantcsdprices {
+  id          Int         @id @default(autoincrement())
+  variantId   Int
+  csdPrice    Decimal     @db.Decimal(10, 2)
+  updatedAt   DateTime?   @default(now()) @db.Timestamp(0)
+  tblvariants tblvariants @relation(fields: [variantId], references: [variantId], onDelete: NoAction, onUpdate: NoAction, map: "tblvariantcsdprices_ibfk_1")
+
+  @@index([variantId], map: "variantId")
+}
+
+model tblvariants {
+  variantId             Int                   @id @default(autoincrement())
+  variantName           String?               @db.VarChar(55)
+  modelId               Int?
+  modelPowertrainId     Int?
+  variantPrice          String?               @db.VarChar(50)
+  variantPriority       Int?                  @db.TinyInt
+  variantPriceDiff      Int?
+  IncrementedPercentage Decimal?              @default(0.00) @db.Decimal(6, 2)
+  featureValue          Int?
+  featureValueDiff      Int?
+  realFeatureValue      Int?
+  vfmValue              Decimal               @default(0.00) @db.Decimal(4, 2)
+  vfmRank               Int?                  @db.TinyInt
+  variantRecommendation String?               @db.VarChar(100)
+  csdPrice              Decimal               @default(0.00) @db.Decimal(10, 2)
+  tblvariantcsdprices   tblvariantcsdprices[]
+
+  @@index([modelPowertrainId], map: "idx_modelPowertrainId")
+  @@index([variantPrice], map: "idx_tblvariants")
+  @@index([modelId], map: "modelId")
+}
+
+model tblvariantsfeatures {
+  variantFeatureId Int @id @default(autoincrement())
+  variantId        Int
+  featureId        Int
+
+  @@index([featureId], map: "featureId")
+  @@index([variantId], map: "variantId")
+}
+
+model tblvariantsfeaturesnew {
+  variantFeatureId Int                               @id @default(autoincrement())
+  variantId        Int
+  featureId        Int
+  subFeatureId     Int?
+  countSize        Decimal?                          @db.Decimal(10, 2)
+  isChecked        tblvariantsfeaturesnew_isChecked?
+  profileSize      String?                           @db.VarChar(255)
+  addDate          DateTime?                         @default(now()) @db.Timestamp(0)
+  editDate         DateTime?                         @default(now()) @db.Timestamp(0)
+
+  @@unique([variantId, featureId], map: "unique_variant_feature")
+  @@index([featureId], map: "featureId")
+  @@index([subFeatureId], map: "subFeatureId")
+  @@index([variantId], map: "variantId")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblvideos_views {
+  visitor_ip String   @db.VarChar(20)
+  page_id    Int      @db.SmallInt
+  dateTime   DateTime @default(now()) @db.DateTime(0)
+
+  @@index([dateTime], map: "idx_dateTime")
+  @@index([page_id], map: "idx_tblvideos_views_page_id")
+  @@index([visitor_ip], map: "idx_tblvideos_views_visitor_ip")
+  @@ignore
+}
+
+model tblwebhomebanner {
+  bannerId     Int    @id @default(autoincrement()) @db.MediumInt
+  imagePath    String @db.VarChar(250)
+  imageAltTag  String @db.VarChar(50)
+  redirectLink String @db.VarChar(200)
+  status       Int    @default(1) @db.TinyInt
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblwebsettings {
+  settingName String @db.VarChar(30)
+  value       String @db.VarChar(500)
+
+  @@index([settingName], map: "idx_tblwebsettings_settingName")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tblwebsitecontent {
+  aboutUsTitle              String? @db.VarChar(100)
+  aboutUsContent            String? @db.Text
+  contactUsTitle            String? @db.VarChar(100)
+  contactUsContent          String? @db.Text
+  privancyTitle             String? @db.VarChar(100)
+  privancyContent           String? @db.LongText
+  termTitle                 String? @db.VarChar(100)
+  termContent               String? @db.LongText
+  consentDecTitle           String? @db.VarChar(100)
+  consentDecContent         String? @db.LongText
+  certifiedCicTitle         String? @db.VarChar(150)
+  certifiedCicContent       String? @db.LongText
+  emiCalcHeading1           String? @db.VarChar(100)
+  emiCalcDesc1              String? @db.VarChar(1000)
+  emiCalcHeading2           String? @db.VarChar(100)
+  emiCalcDesc2              String? @db.Text
+  emiCalcDesc3              String? @db.Text
+  fuelCostPageTitle         String? @db.VarChar(100)
+  fuelCostPageDesc          String? @db.Text
+  fuelCostFaqTitle          String? @db.VarChar(100)
+  fuelCostFaqDesc           String? @db.Text
+  carLoanContent            String? @db.Text
+  mileageCalcContent        String? @db.LongText
+  mileageCalcHeadingContent String? @db.LongText
+  fuelCostIntDesc           String? @db.LongText
+  fuelCostIntHeadDesc       String? @db.LongText
+
+  @@ignore
+}
+
+model tblwebsiteimages {
+  imageId      Int      @id @default(autoincrement())
+  imagePath    String   @db.VarChar(500)
+  imageAltText String?  @db.VarChar(255)
+  addedBy      Int?
+  dateTime     DateTime @default(now()) @db.DateTime(0)
+}
+
+model tblwebsitepages {
+  pageId         Int       @id @default(autoincrement())
+  pageName       String?   @db.VarChar(100)
+  pageCategoryId Int?
+  addedDateTime  DateTime? @db.DateTime(0)
+  addedBy        Int?
+  pageTypeId     Int?
+
+  @@index([pageName], map: "idx_tblwebsitepages_pageName")
+  @@index([pageCategoryId], map: "pageCategoryId")
+}
+
+model tblwebvideos {
+  videoId            Int      @id @default(autoincrement()) @db.SmallInt
+  video_title        String   @db.VarChar(555)
+  pageUrl            String   @db.VarChar(500)
+  metaTitle          String?  @db.VarChar(1000)
+  metaDescription    String   @db.Text
+  longDescription    String?  @db.Text
+  keywords           String?  @db.Text
+  brandTagging       String?  @db.Text
+  modelTagging       String?  @db.Text
+  video_thumbnail    String   @db.VarChar(255)
+  videoYId           String   @db.VarChar(100)
+  schemaBodyContent  String?  @db.Text
+  status             Boolean  @default(true)
+  publishStatus      Int      @default(1) @db.TinyInt
+  dateTimePublishing DateTime @default(now()) @db.DateTime(0)
+  uniqueView         String   @default("0") @db.VarChar(100)
+  add_by             Int      @db.SmallInt
+  videoType          Int      @default(1) @db.TinyInt
+  add_dateandtime    DateTime @db.DateTime(0)
+  uploaded_by        Int?     @db.TinyInt
+  authorId           Int      @default(0) @db.TinyInt
+  last_15days_view   Int      @default(0)
+  last_30days_view   Int      @default(0)
+  updatedDatetime    DateTime @default(now()) @db.DateTime(0)
+  timestamp          String?  @db.Text
+
+  @@index([add_by], map: "idx_tblwebvideos_add_by")
+  @@index([authorId], map: "idx_tblwebvideos_authorId")
+  @@index([dateTimePublishing], map: "idx_tblwebvideos_dateTimePublishing")
+  @@index([last_15days_view], map: "idx_tblwebvideos_last_15days_view")
+  @@index([last_30days_view], map: "idx_tblwebvideos_last_30days_view")
+  @@index([pageUrl], map: "idx_tblwebvideos_pageUrl")
+  @@index([publishStatus], map: "idx_tblwebvideos_publishStatus")
+  @@index([status], map: "idx_tblwebvideos_status")
+  @@index([uniqueView], map: "idx_tblwebvideos_uniqueView")
+  @@index([uploaded_by], map: "idx_tblwebvideos_uploaded_by")
+  @@index([videoType], map: "idx_tblwebvideos_videoType")
+  @@index([video_title], map: "idx_tblwebvideos_video_title")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tblwhatsapplog {
+  logId        Int       @id @default(autoincrement())
+  mobileNumber String?   @db.VarChar(50)
+  formType     Int?      @db.TinyInt
+  ipAddress    String?   @db.VarChar(45)
+  dateTime     DateTime? @db.DateTime(0)
+}
+
+model tblpermissions {
+  id    Int     @id @default(autoincrement())
+  title String? @db.VarChar(100)
+}
+
+model tblroles {
+  id            Int     @id @default(autoincrement())
+  role          String? @db.VarChar(100)
+  parent_role   String? @db.VarChar(255)
+  permissionIds String? @db.VarChar(500)
+}
+
+enum tblfeaturesnew_selectionType {
+  Default
+  Count
+  Dropdown
+  Dropdown___Count @map("Dropdown + Count")
+}
+
+enum tblvariantsfeaturesnew_isChecked {
+  ZERO @map("0")
+  ONE  @map("1")
+}
+
+enum tblfeaturesnew_pricing {
+  Single
+  Multiple
+}
+
+enum tblfeaturesnew_displayOption {
+  No
+  Yes
+  Front @map(" Front")
+  Rear  @map(" Rear")
+}
+
+enum tblfeaturesnew_displayCount {
+  No
+  Yes
+  Front @map(" Front")
+  Rear  @map(" Rear")
+}
