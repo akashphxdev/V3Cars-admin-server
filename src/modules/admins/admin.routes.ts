@@ -17,9 +17,9 @@ import { authenticate } from '../../middlewares/authenticate';
 
 const adminRouter = Router();
 
-adminRouter.use(authenticate);
+// adminRouter.use(authenticate);
 
-// ─── Static routes first — warna /:id inhe pakad leta hai ────────────────────
+// ─── Static routes PEHLE — warna /:id inhe pakad leta hai ────────────────────
 adminRouter.get('/permissions',                  getPermissions);
 adminRouter.get('/roles',                        getRoles);
 adminRouter.get('/sub-roles/:parentId',          getSubRoles);

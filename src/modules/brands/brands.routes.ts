@@ -1,26 +1,11 @@
-import { Router } from 'express';
-import {
-  getBrands,
-  getBrand,
-  addBrand,
-  editBrand,
-  toggleStatus,
-  removeBrand,
-} from './brands.controller';
-import { authenticate } from '../../middlewares/authenticate';
+// src/brands/routes/brand.routes.ts
 
-const brandsRouter = Router();
+import { Router } from "express";
+import { brandController } from "./brands.controller";
 
-// brandsRouter.use(authenticate);
+const router = Router();
 
-// ─── CRUD ─────────────────────────────────────────────────────────────────────
-brandsRouter.get('/',    getBrands);   // GET    /admin/v1/brands
-brandsRouter.get('/:id', getBrand);    // GET    /admin/v1/brands/:id
-brandsRouter.post('/',   addBrand);    // POST   /admin/v1/brands
-brandsRouter.put('/:id', editBrand);   // PUT    /admin/v1/brands/:id
-brandsRouter.delete('/:id', removeBrand); // DELETE /admin/v1/brands/:id
+// GET /api/brands
+router.get("/all", brandController.getAllBrandNames);
 
-// ─── Extra ────────────────────────────────────────────────────────────────────
-brandsRouter.patch('/:id/toggle-status', toggleStatus); // PATCH /admin/v1/brands/:id/toggle-status
-
-export default brandsRouter;
+export default router;

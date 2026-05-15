@@ -1,15 +1,28 @@
 // src/modules/roles/role.service.ts
 
 import prisma from '../../config/db';
-import { GetRolesQuery, CreateRolePayload, UpdateRolePayload } from './role.types';
+import { GetRolesQuery, CreateRolePayload, UpdateRolePayload, DeleteRolePayload } from './role.types';
 
-const SUPER_ADMIN_ID = 1; // tblroles mein id=1 SuperAdmin — kabhi edit/delete nahi hoga
+// ─── Protected Role IDs ───────────────────────────────────────────────────────
+const PROTECTED_IDS = [1, 2]; // 1 = SuperAdmin, 2 = Admin
+
+// ─── Audit Log Helper ─────────────────────────────────────────────────────────
+
+const writeLog = async (action: string, ip: string) => {
+  try {
+    await (prisma as any).tblauditlogs.create({
+      data: { action, ip },
+    });
+  } catch (err) {
+    console.error('[Roles] Audit log error:', err);
+  }
+};
 
 // ─── Get All Roles (paginated) ────────────────────────────────────────────────
 
 export const getAllRoles = async (query: GetRolesQuery) => {
-  const page  = Number(query.page)  || 1;
-  const limit = Number(query.limit) || 10;
+  const page  = Math.max(Number(query.page)  || 1, 1);
+  const limit = Math.min(Number(query.limit) || 10, 100);
   const skip  = (page - 1) * limit;
 
   const where: any = {};
@@ -17,26 +30,87 @@ export const getAllRoles = async (query: GetRolesQuery) => {
     where.role = { contains: query.search };
   }
 
+  // ─── Step 1: Paginated roles fetch karo ───────────────────────────────────
   const [roles, total] = await Promise.all([
-    prisma.tblroles.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { id: 'asc' },
-    }),
+    prisma.tblroles.findMany({ where, skip, take: limit, orderBy: { id: 'desc' } }),
     prisma.tblroles.count({ where }),
   ]);
 
+  if (roles.length === 0) {
+    return {
+      data: [],
+      pagination: { total: 0, page, limit, totalPages: 0 },
+    };
+  }
+
+  // ─── Step 2: Saare related role IDs collect karo ─────────────────────────
+  const currentIds    = roles.map((r) => r.id);
+  const parentIdStrs  = roles.map((r) => r.parent_role).filter(Boolean) as string[];
+  const parentIds     = parentIdStrs.map(Number).filter(Boolean);
+
+  // ─── Step 3: Parents + sub-roles ek saath fetch karo ─────────────────────
+  const relatedRoles = await prisma.tblroles.findMany({
+    where: {
+      OR: [
+        { id: { in: parentIds } },                          // parents
+        { parent_role: { in: currentIds.map(String) } },   // sub-roles
+      ],
+    } as any,
+    select: { id: true, role: true, parent_role: true },
+  });
+
+  const relatedMap = new Map(relatedRoles.map((r) => [r.id, r]));
+
+  // ─── Step 4: Permissions fetch karo ──────────────────────────────────────
+  const allPermIds = roles.flatMap((r) =>
+    r.permissionIds ? r.permissionIds.split(',').map(Number).filter(Boolean) : []
+  );
+  const uniquePermIds = [...new Set(allPermIds)];
+
+  const permissions = uniquePermIds.length > 0
+    ? await (prisma as any).tblpermissions.findMany({
+        where:  { id: { in: uniquePermIds } },
+        select: { id: true, title: true },
+      })
+    : [];
+
+  const permMap = new Map(permissions.map((p: any) => [p.id, p.title]));
+
+  // ─── Step 5: Enrich karo ──────────────────────────────────────────────────
+  const enriched = roles.map((role) => {
+    const parentId   = role.parent_role ? Number(role.parent_role) : null;
+    const parentRole = parentId ? relatedMap.get(parentId) ?? null : null;
+
+    const subRoles = relatedRoles
+      .filter((r) => r.parent_role === String(role.id))
+      .map((r) => ({ id: r.id, role: r.role }));
+
+    const permIds    = role.permissionIds ? role.permissionIds.split(',').map(Number).filter(Boolean) : [];
+    const permissionNames = permIds.map((id) => ({
+      id,
+      title: permMap.get(id) ?? null,
+    }));
+
+    return {
+      ...role,
+      parentRole:       parentRole ? { id: parentRole.id, role: parentRole.role } : null,
+      subRoles,
+      permissionNames,
+    };
+  });
+
   return {
-    data: roles,
+    data: enriched,
     pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
   };
 };
+// ─── Get Only Top-Level Roles (parent dropdown ke liye) ───────────────────────
 
-// ─── Get All Roles (flat list for dropdowns) ─────────────────────────────────
-
-export const getAllRolesFlat = async () => {
-  return prisma.tblroles.findMany({ orderBy: { id: 'asc' } });
+export const getTopLevelRoles = async () => {
+  return prisma.tblroles.findMany({
+    where:   { parent_role: null } as any,
+    orderBy: { id: 'asc' },
+  });
 };
 
 // ─── Get Single Role ──────────────────────────────────────────────────────────
@@ -59,13 +133,15 @@ export const createRole = async (payload: CreateRolePayload) => {
     } as any,
   });
 
+  await writeLog(`Created a new role "${payload.role}"`, payload.ip);
+
   return { duplicate: false, data: role };
 };
 
 // ─── Update Role ──────────────────────────────────────────────────────────────
 
 export const updateRole = async (id: number, payload: UpdateRolePayload) => {
-  if (id === SUPER_ADMIN_ID) return { protected: true };
+  if (PROTECTED_IDS.includes(id)) return { protected: true };
 
   const existing = await prisma.tblroles.findUnique({ where: { id } });
   if (!existing) return null;
@@ -84,23 +160,28 @@ export const updateRole = async (id: number, payload: UpdateRolePayload) => {
     } as any,
   });
 
+  const roleName = payload.role ?? existing.role ?? `ID ${id}`;
+  await writeLog(`Updated role "${roleName}"`, payload.ip);
+
   return { duplicate: false, data: updated };
 };
 
 // ─── Delete Role ──────────────────────────────────────────────────────────────
 
-export const deleteRole = async (id: number) => {
-  if (id === SUPER_ADMIN_ID) return { protected: true };
+export const deleteRole = async (id: number, payload: DeleteRolePayload) => {
+  if (PROTECTED_IDS.includes(id)) return { protected: true };
 
   const existing = await prisma.tblroles.findUnique({ where: { id } });
   if (!existing) return null;
 
-  // is role ke sub-roles ka parent_role null kar do
   await prisma.tblroles.updateMany({
     where: { parent_role: String(id) } as any,
     data:  { parent_role: null }       as any,
   });
 
   await prisma.tblroles.delete({ where: { id } });
+
+  await writeLog(`Deleted role "${existing.role ?? `ID ${id}`}"`, payload.ip);
+
   return { deleted: true };
 };

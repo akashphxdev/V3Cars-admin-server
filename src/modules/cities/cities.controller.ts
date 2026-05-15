@@ -1,3 +1,5 @@
+// src/modules/cities/cities.controller.ts
+
 import { Request, Response } from 'express';
 import {
   getAllCities,
@@ -7,11 +9,23 @@ import {
   toggleCityStatus,
   deleteCity,
 } from './cities.service';
+import {
+  validateIdParam,
+  validateGetCities,
+  validateCreateCity,
+  validateUpdateCity,
+} from './cities.validation';
 
 // ─── GET /cities ──────────────────────────────────────────────────────────────
 
-export const getCities = async (req: Request, res: Response) => {
+export const getCities = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { valid, message } = validateGetCities(req.query);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
+      return;
+    }
+
     const result = await getAllCities(req.query as any);
     res.json({ success: true, ...result });
   } catch (error) {
@@ -22,17 +36,15 @@ export const getCities = async (req: Request, res: Response) => {
 
 // ─── GET /cities/:id ──────────────────────────────────────────────────────────
 
-export const getCity = async (req: Request, res: Response) => {
+export const getCity = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cityId = Number(req.params.id);
-
-    if (isNaN(cityId)) {
-      res.status(400).json({ success: false, message: 'Invalid city ID' });
+    const { valid, message } = validateIdParam(req.params.id);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
 
-    const city = await getCityById(cityId);
-
+    const city = await getCityById(Number(req.params.id));
     if (!city) {
       res.status(404).json({ success: false, message: 'City not found' });
       return;
@@ -47,22 +59,18 @@ export const getCity = async (req: Request, res: Response) => {
 
 // ─── POST /cities ─────────────────────────────────────────────────────────────
 
-export const addCity = async (req: Request, res: Response) => {
+export const addCity = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { cityName } = req.body;
-
-    if (!cityName) {
-      res.status(400).json({ success: false, message: 'cityName is required' });
+    const { valid, message } = validateCreateCity(req.body);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
 
     const result = await createCity(req.body);
 
     if (result.duplicate) {
-      res.status(409).json({
-        success: false,
-        message: 'City already exists in this state',
-      });
+      res.status(409).json({ success: false, message: 'City already exists in this state' });
       return;
     }
 
@@ -79,27 +87,28 @@ export const addCity = async (req: Request, res: Response) => {
 
 // ─── PUT /cities/:id ──────────────────────────────────────────────────────────
 
-export const editCity = async (req: Request, res: Response) => {
+export const editCity = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cityId = Number(req.params.id);
-
-    if (isNaN(cityId)) {
-      res.status(400).json({ success: false, message: 'Invalid city ID' });
+    const idCheck = validateIdParam(req.params.id);
+    if (!idCheck.valid) {
+      res.status(400).json({ success: false, message: idCheck.message });
       return;
     }
 
-    const result = await updateCity(cityId, req.body);
+    const bodyCheck = validateUpdateCity(req.body);
+    if (!bodyCheck.valid) {
+      res.status(400).json({ success: false, message: bodyCheck.message });
+      return;
+    }
+
+    const result = await updateCity(Number(req.params.id), req.body);
 
     if (result === null) {
       res.status(404).json({ success: false, message: 'City not found' });
       return;
     }
-
     if ((result as any).duplicate) {
-      res.status(409).json({
-        success: false,
-        message: 'City already exists in this state',
-      });
+      res.status(409).json({ success: false, message: 'City already exists in this state' });
       return;
     }
 
@@ -116,17 +125,15 @@ export const editCity = async (req: Request, res: Response) => {
 
 // ─── PATCH /cities/:id/toggle-status ─────────────────────────────────────────
 
-export const toggleStatus = async (req: Request, res: Response) => {
+export const toggleStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cityId = Number(req.params.id);
-
-    if (isNaN(cityId)) {
-      res.status(400).json({ success: false, message: 'Invalid city ID' });
+    const { valid, message } = validateIdParam(req.params.id);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
 
-    const city = await toggleCityStatus(cityId);
-
+    const city = await toggleCityStatus(Number(req.params.id));
     if (!city) {
       res.status(404).json({ success: false, message: 'City not found' });
       return;
@@ -145,17 +152,15 @@ export const toggleStatus = async (req: Request, res: Response) => {
 
 // ─── DELETE /cities/:id ───────────────────────────────────────────────────────
 
-export const removeCity = async (req: Request, res: Response) => {
+export const removeCity = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cityId = Number(req.params.id);
-
-    if (isNaN(cityId)) {
-      res.status(400).json({ success: false, message: 'Invalid city ID' });
+    const { valid, message } = validateIdParam(req.params.id);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
 
-    const result = await deleteCity(cityId);
-
+    const result = await deleteCity(Number(req.params.id));
     if (!result) {
       res.status(404).json({ success: false, message: 'City not found' });
       return;

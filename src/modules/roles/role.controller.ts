@@ -3,12 +3,27 @@
 import { Request, Response } from 'express';
 import {
   getAllRoles,
-  getAllRolesFlat,
+  getTopLevelRoles,
   getRoleById,
   createRole,
   updateRole,
   deleteRole,
 } from './role.service';
+import {
+  validateCreateRole,
+  validateUpdateRole,
+  validateIdParam,
+} from './role.validation';
+
+// ─── IP Helper ────────────────────────────────────────────────────────────────
+
+const getIP = (req: Request): string => {
+  return (
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+    req.socket?.remoteAddress ||
+    'unknown'
+  );
+};
 
 // ─── GET /api/roles ───────────────────────────────────────────────────────────
 
@@ -22,15 +37,14 @@ export const getRoles = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/roles/all ───────────────────────────────────────────────────────
-// Dropdown ke liye flat list
+// ─── GET /api/roles/parents ───────────────────────────────────────────────────
 
-export const getRolesFlat = async (req: Request, res: Response) => {
+export const getParentRoles = async (req: Request, res: Response) => {
   try {
-    const roles = await getAllRolesFlat();
+    const roles = await getTopLevelRoles();
     res.json({ success: true, data: roles });
   } catch (error) {
-    console.error('[Roles] getRolesFlat error:', error);
+    console.error('[Roles] getParentRoles error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -39,12 +53,13 @@ export const getRolesFlat = async (req: Request, res: Response) => {
 
 export const getRole = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      res.status(400).json({ success: false, message: 'Invalid role ID' });
+    const { valid, message } = validateIdParam(req.params.id);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
-    const role = await getRoleById(id);
+
+    const role = await getRoleById(Number(req.params.id));
     if (!role) {
       res.status(404).json({ success: false, message: 'Role not found' });
       return;
@@ -60,21 +75,19 @@ export const getRole = async (req: Request, res: Response) => {
 
 export const addRole = async (req: Request, res: Response) => {
   try {
-    const { role, parent_role, permissionIds } = req.body;
+    const { valid, message } = validateCreateRole(req.body);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
+      return;
+    }
 
-    if (!role || !role.trim()) {
-      res.status(400).json({ success: false, message: 'Role name is required' });
-      return;
-    }
-    if (!permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
-      res.status(400).json({ success: false, message: 'At least one permission is required' });
-      return;
-    }
+    const { role, parent_role, permissionIds } = req.body;
 
     const result = await createRole({
       role:          role.trim(),
       parent_role:   parent_role ? String(parent_role) : null,
       permissionIds: permissionIds.join(','),
+      ip:            getIP(req),
     });
 
     if (result.duplicate) {
@@ -93,24 +106,25 @@ export const addRole = async (req: Request, res: Response) => {
 
 export const editRole = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      res.status(400).json({ success: false, message: 'Invalid role ID' });
+    const idCheck = validateIdParam(req.params.id);
+    if (!idCheck.valid) {
+      res.status(400).json({ success: false, message: idCheck.message });
       return;
     }
 
+    const bodyCheck = validateUpdateRole(req.body);
+    if (!bodyCheck.valid) {
+      res.status(400).json({ success: false, message: bodyCheck.message });
+      return;
+    }
+
+    const id = Number(req.params.id);
     const { role, parent_role, permissionIds } = req.body;
 
-    const payload: any = {};
+    const payload: any = { ip: getIP(req) };
     if (role          !== undefined) payload.role          = role.trim();
     if (parent_role   !== undefined) payload.parent_role   = parent_role ? String(parent_role) : null;
-    if (permissionIds !== undefined) {
-      if (!Array.isArray(permissionIds) || permissionIds.length === 0) {
-        res.status(400).json({ success: false, message: 'At least one permission is required' });
-        return;
-      }
-      payload.permissionIds = permissionIds.join(',');
-    }
+    if (permissionIds !== undefined) payload.permissionIds = permissionIds.join(',');
 
     const result = await updateRole(id, payload);
 
@@ -119,7 +133,7 @@ export const editRole = async (req: Request, res: Response) => {
       return;
     }
     if ((result as any).protected) {
-      res.status(403).json({ success: false, message: 'SuperAdmin role cannot be modified' });
+      res.status(403).json({ success: false, message: 'This role cannot be modified' });
       return;
     }
     if ((result as any).duplicate) {
@@ -138,20 +152,21 @@ export const editRole = async (req: Request, res: Response) => {
 
 export const removeRole = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      res.status(400).json({ success: false, message: 'Invalid role ID' });
+    const { valid, message } = validateIdParam(req.params.id);
+    if (!valid) {
+      res.status(400).json({ success: false, message });
       return;
     }
 
-    const result = await deleteRole(id);
+    const id = Number(req.params.id);
+    const result = await deleteRole(id, { ip: getIP(req) });
 
     if (result === null) {
       res.status(404).json({ success: false, message: 'Role not found' });
       return;
     }
     if ((result as any).protected) {
-      res.status(403).json({ success: false, message: 'SuperAdmin role cannot be deleted' });
+      res.status(403).json({ success: false, message: 'This role cannot be deleted' });
       return;
     }
 
