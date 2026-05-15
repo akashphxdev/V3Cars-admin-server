@@ -1,5 +1,5 @@
-import prisma from '../../config/db';
-import { logEvent } from '../events/event.service';
+import prisma from '@/config/db';
+import { logEvent } from '@/modules/admin/events/event.service';
 import { LoginPayload, VerifyOtpPayload } from './auth.types';
 import { sendOtpEmail, sendPasswordResetEmail } from '../../lib/email.service';
 import crypto from 'crypto';

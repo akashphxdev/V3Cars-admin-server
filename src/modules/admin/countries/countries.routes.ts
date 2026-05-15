@@ -7,7 +7,7 @@ import {
   toggleStatus,
   removeCountry,
 } from './countries.controller';
-import { authenticate } from '../../middlewares/authenticate';
+
 
 const countriesRouter = Router();
 

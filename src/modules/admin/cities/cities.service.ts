@@ -1,4 +1,4 @@
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetCitiesQuery, CreateCityPayload, UpdateCityPayload } from './cities.types';
 
 const citySelect = {

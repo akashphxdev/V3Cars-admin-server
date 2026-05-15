@@ -1,6 +1,6 @@
 // src/modules/admin/admin.service.ts
 
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetAdminsQuery, CreateAdminPayload, UpdateAdminPayload } from './admin.types';
 import crypto from 'crypto';
 

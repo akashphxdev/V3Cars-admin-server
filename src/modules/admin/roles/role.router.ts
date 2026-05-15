@@ -9,11 +9,8 @@ import {
   editRole,
   removeRole,
 } from './role.controller';
-import { authenticate } from '../../middlewares/authenticate';
 
 const roleRouter = Router();
-
-roleRouter.use(authenticate);
 
 // Static routes pehle
 roleRouter.get('/parents', getParentRoles); // new role banate waqt parent dropdown

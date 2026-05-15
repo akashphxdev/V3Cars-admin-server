@@ -2,7 +2,6 @@
 
 import { Router } from 'express';
 import { getDistricts, editDistrict } from './district.controller';
-import { authenticate } from '../../middlewares/authenticate';
 
 const districtRouter = Router();
 

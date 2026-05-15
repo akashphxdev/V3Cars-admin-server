@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import adminRouter from '../modules/admins/admin.routes';
+import adminRouter from '../modules/admin/admins/admin.routes';
 import authRouter from '../modules/auth/auth.routes';
-import brandsRouter from '../modules/brands/brands.routes';
-import countriesRouter from '../modules/countries/countries.routes';
-import citiesRouter    from '../modules/cities/cities.routes';
-import eventRouter from '../modules/events/event.routes';
-import roleRouter from '../modules/roles/role.router';
-import modelRoutes from "../modules/models/model.routes";
-import districtRouter from '../modules/districts/district.router';
+import brandsRouter from '../modules/cars/brands/brands.routes';
+import countriesRouter from '../modules/admin/countries/countries.routes';
+import citiesRouter    from '../modules/admin/cities/cities.routes';
+import eventRouter from '../modules/admin/events/event.routes';
+import roleRouter from '../modules/admin/roles/role.router';
+import modelRoutes from "../modules/cars/models/model.routes";
+import districtRouter from '../modules/admin/districts/district.router';
 
 const router = Router();
 

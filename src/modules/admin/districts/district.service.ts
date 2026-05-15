@@ -1,6 +1,6 @@
 // src/modules/districts/district.service.ts
 
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetDistrictsQuery, UpdateDistrictPayload } from './district.types';
 
 // ─── Audit Log Helper ─────────────────────────────────────────────────────────

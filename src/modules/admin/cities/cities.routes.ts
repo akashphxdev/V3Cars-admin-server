@@ -7,8 +7,6 @@ import {
   toggleStatus,
   removeCity,
 } from './cities.controller';
-import { authenticate } from '../../middlewares/authenticate';
-
 const citiesRouter = Router();
 
 // citiesRouter.use(authenticate);

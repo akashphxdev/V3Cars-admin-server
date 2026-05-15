@@ -1,6 +1,6 @@
 // src/modules/models/model.service.ts
 
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { ModelName } from './model.types';
 
 export const getModelsByBrandId = async (brandId: number): Promise<ModelName[]> => {

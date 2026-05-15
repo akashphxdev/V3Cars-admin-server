@@ -1,4 +1,4 @@
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetEventsQuery, CreateEventPayload } from './event.types';
 
 const serializeEvent = (event: any) => ({

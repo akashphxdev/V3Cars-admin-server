@@ -13,7 +13,6 @@ import {
   getRolePerms,
   createCustomRoleController,
 } from './admin.controller';
-import { authenticate } from '../../middlewares/authenticate';
 
 const adminRouter = Router();
 

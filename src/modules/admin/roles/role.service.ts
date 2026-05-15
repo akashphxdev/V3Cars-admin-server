@@ -1,6 +1,6 @@
 // src/modules/roles/role.service.ts
 
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetRolesQuery, CreateRolePayload, UpdateRolePayload, DeleteRolePayload } from './role.types';
 
 // ─── Protected Role IDs ───────────────────────────────────────────────────────

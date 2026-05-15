@@ -1,4 +1,4 @@
-import prisma from '../../config/db';
+import prisma from '@/config/db';
 import { GetCountriesQuery, CreateCountryPayload, UpdateCountryPayload } from './countries.types';
 
 const countrySelect = {
