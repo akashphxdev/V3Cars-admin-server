@@ -13,11 +13,24 @@ import {
   getPermissionsByRole,
   createCustomRole,
 } from './admin.service';
+import {
+  validateIdParam,
+  validateGetAdmins,
+  validateCreateAdmin,
+  validateUpdateAdmin,
+  validateCreateCustomRole,
+} from './admin.validation';
 
-// ─── GET /api/admin/admins ──────────────────────────────────────────────────
+// ─── GET /admins ──────────────────────────────────────────────────────────────
 
 export const getAdmins = async (req: Request, res: Response) => {
   try {
+    const validation = validateGetAdmins(req.query);
+    if (!validation.valid) {
+      res.status(400).json({ success: false, message: validation.message });
+      return;
+    }
+
     const result = await getAllAdmins(req.query as any);
     res.json({ success: true, ...result });
   } catch (error) {
@@ -26,20 +39,22 @@ export const getAdmins = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/admin/admins/:id ────────────────────────────────────────────────
+// ─── GET /admins/:id ──────────────────────────────────────────────────────────
 
 export const getAdmin = async (req: Request, res: Response) => {
   try {
-    const adminId = Number(req.params.id);
-    if (isNaN(adminId)) {
-      res.status(400).json({ success: false, message: 'Invalid admin ID' });
+    const idValidation = validateIdParam(req.params.id);
+    if (!idValidation.valid) {
+      res.status(400).json({ success: false, message: idValidation.message });
       return;
     }
-    const admin = await getAdminById(adminId);
+
+    const admin = await getAdminById(Number(req.params.id));
     if (!admin) {
       res.status(404).json({ success: false, message: 'Admin not found' });
       return;
     }
+
     res.json({ success: true, data: admin });
   } catch (error) {
     console.error('[Admin] getAdmin error:', error);
@@ -47,23 +62,21 @@ export const getAdmin = async (req: Request, res: Response) => {
   }
 };
 
-// ─── POST /api/admin/admins ───────────────────────────────────────────────────
+// ─── POST /admins ─────────────────────────────────────────────────────────────
 
 export const addAdmin = async (req: Request, res: Response) => {
   try {
+    const validation = validateCreateAdmin(req.body);
+    if (!validation.valid) {
+      res.status(400).json({ success: false, message: validation.message });
+      return;
+    }
+
     const {
       adminUserName, adminPassword, adminName, adminEmailId,
       adminType, adminSubType, status, accessBrands,
       accessStartDate, accessEndDate, maxRows,
     } = req.body;
-
-    if (!adminUserName || !adminPassword || !adminName || !adminEmailId || adminType === undefined) {
-      res.status(400).json({
-        success: false,
-        message: 'adminUserName, adminPassword, adminName, adminEmailId and adminType are required',
-      });
-      return;
-    }
 
     const result = await createAdmin({
       adminUserName, adminPassword, adminName, adminEmailId,
@@ -87,17 +100,24 @@ export const addAdmin = async (req: Request, res: Response) => {
   }
 };
 
-// ─── PUT /api/admin/admins/:id ────────────────────────────────────────────────
+// ─── PUT /admins/:id ──────────────────────────────────────────────────────────
 
 export const editAdmin = async (req: Request, res: Response) => {
   try {
-    const adminId = Number(req.params.id);
-    if (isNaN(adminId)) {
-      res.status(400).json({ success: false, message: 'Invalid admin ID' });
+    const idValidation = validateIdParam(req.params.id);
+    if (!idValidation.valid) {
+      res.status(400).json({ success: false, message: idValidation.message });
       return;
     }
 
-    const result = await updateAdmin(adminId, req.body);
+    const bodyValidation = validateUpdateAdmin(req.body);
+    if (!bodyValidation.valid) {
+      res.status(400).json({ success: false, message: bodyValidation.message });
+      return;
+    }
+
+    const result = await updateAdmin(Number(req.params.id), req.body);
+
     if (result === null) {
       res.status(404).json({ success: false, message: 'Admin not found' });
       return;
@@ -117,20 +137,22 @@ export const editAdmin = async (req: Request, res: Response) => {
   }
 };
 
-// ─── PATCH /api/admin/admins/:id/toggle-lock ──────────────────────────────────
+// ─── PATCH /admins/:id/toggle-lock ───────────────────────────────────────────
 
 export const lockUnlockAdmin = async (req: Request, res: Response) => {
   try {
-    const adminId = Number(req.params.id);
-    if (isNaN(adminId)) {
-      res.status(400).json({ success: false, message: 'Invalid admin ID' });
+    const idValidation = validateIdParam(req.params.id);
+    if (!idValidation.valid) {
+      res.status(400).json({ success: false, message: idValidation.message });
       return;
     }
-    const admin = await toggleAdminLock(adminId);
+
+    const admin = await toggleAdminLock(Number(req.params.id));
     if (!admin) {
       res.status(404).json({ success: false, message: 'Admin not found' });
       return;
     }
+
     res.json({
       success: true,
       message: `Admin ${admin.isLock === 1 ? 'locked' : 'unlocked'} successfully`,
@@ -142,7 +164,7 @@ export const lockUnlockAdmin = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/admin/admins/permissions ───────────────────────────────────────
+// ─── GET /admins/permissions ──────────────────────────────────────────────────
 
 export const getPermissions = async (req: Request, res: Response) => {
   try {
@@ -154,7 +176,7 @@ export const getPermissions = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/admin/admins/roles ─────────────────────────────────────────────
+// ─── GET /admins/roles ────────────────────────────────────────────────────────
 
 export const getRoles = async (req: Request, res: Response) => {
   try {
@@ -166,16 +188,17 @@ export const getRoles = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/admin/admins/sub-roles/:parentId ───────────────────────────────
+// ─── GET /admins/sub-roles/:parentId ─────────────────────────────────────────
 
 export const getSubRoles = async (req: Request, res: Response) => {
   try {
-    const parentId = Number(req.params.parentId);
-    if (isNaN(parentId)) {
-      res.status(400).json({ success: false, message: 'Invalid parent ID' });
+    const idValidation = validateIdParam(req.params.parentId);
+    if (!idValidation.valid) {
+      res.status(400).json({ success: false, message: `parentId: ${idValidation.message}` });
       return;
     }
-    const roles = await getSubRolesByParent(parentId);
+
+    const roles = await getSubRolesByParent(Number(req.params.parentId));
     res.json({ success: true, data: roles });
   } catch (error) {
     console.error('[Admin] getSubRoles error:', error);
@@ -183,16 +206,17 @@ export const getSubRoles = async (req: Request, res: Response) => {
   }
 };
 
-// ─── GET /api/admin/admins/role-permissions/:roleId ──────────────────────────
+// ─── GET /admins/role-permissions/:roleId ────────────────────────────────────
 
 export const getRolePerms = async (req: Request, res: Response) => {
   try {
-    const roleId = Number(req.params.roleId);
-    if (isNaN(roleId)) {
-      res.status(400).json({ success: false, message: 'Invalid role ID' });
+    const idValidation = validateIdParam(req.params.roleId);
+    if (!idValidation.valid) {
+      res.status(400).json({ success: false, message: `roleId: ${idValidation.message}` });
       return;
     }
-    const permissions = await getPermissionsByRole(roleId);
+
+    const permissions = await getPermissionsByRole(Number(req.params.roleId));
     res.json({ success: true, data: permissions });
   } catch (error) {
     console.error('[Admin] getRolePerms error:', error);
@@ -200,20 +224,17 @@ export const getRolePerms = async (req: Request, res: Response) => {
   }
 };
 
-// ─── POST /api/admin/admins/custom-role ──────────────────────────────────────
+// ─── POST /admins/custom-role ─────────────────────────────────────────────────
 
 export const createCustomRoleController = async (req: Request, res: Response) => {
   try {
-    const { adminUserName, permissionIds } = req.body;
-
-    if (!adminUserName || !permissionIds || !Array.isArray(permissionIds) || permissionIds.length === 0) {
-      res.status(400).json({
-        success: false,
-        message: 'adminUserName and permissionIds (non-empty array) are required',
-      });
+    const validation = validateCreateCustomRole(req.body);
+    if (!validation.valid) {
+      res.status(400).json({ success: false, message: validation.message });
       return;
     }
 
+    const { adminUserName, permissionIds } = req.body;
     const role = await createCustomRole(adminUserName, permissionIds);
     res.status(201).json({ success: true, data: role });
   } catch (error) {
