@@ -14,7 +14,7 @@ import {
   createCustomRole,
 } from './admin.service';
 
-// ─── GET /api/admin/admins ───────────────────────────────────────────────────
+// ─── GET /api/admin/admins ──────────────────────────────────────────────────
 
 export const getAdmins = async (req: Request, res: Response) => {
   try {
