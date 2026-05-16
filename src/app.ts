@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import corsOptions from './config/cors';
-import router from './routes/index';
+import corsOptions from '@/config/cors';
+import router from '@/routes/index';
 
 const app = express();
 

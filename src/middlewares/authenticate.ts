@@ -2,7 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthTokenPayload } from '../modules/auth/auth.types';
+import { AuthTokenPayload } from '@/modules/auth/auth.types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 

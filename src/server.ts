@@ -1,6 +1,6 @@
-import app from './app';
-import env from './config/env';
-import prisma from './config/db';
+import app from '@/app';
+import env from '@/config/env';
+import prisma from '@/config/db';
 
 async function startServer() {
   try {
